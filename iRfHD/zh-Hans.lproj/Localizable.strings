@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  iRfHD
+
+  Created by pro on 13-3-18.
+  Copyright (c) 2013年 rwe. All rights reserved.
+*/
+"Release to refresh..." = "松开即可刷新";
+"Pull down to refresh..." = "下拉可以刷新";
+"Loading..." = "读取中...";
+"Last Updated" = "最后更新";
+"Search" = "搜索";
+"Cancel" = "取消";
+"Apply" = "确定";
+"Error" = "错误";
+"Info" = "提示";

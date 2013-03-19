@@ -8,12 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@class iRfViewController;
+@class RootViewController;
 
-@interface iRfAppDelegate : UIResponder <UIApplicationDelegate>
+@interface iRfAppDelegate : UIResponder <UIApplicationDelegate,UINavigationControllerDelegate>
+{
+    NSString *devtoken;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) iRfViewController *viewController;
+@property (strong, nonatomic) UINavigationController *navigationController;
+
+@property (strong, nonatomic) NSString *devtoken;
 
 @end
