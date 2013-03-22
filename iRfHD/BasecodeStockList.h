@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "DataSetRequest.h"
+#import "ConditionMakerController.h"
 
 @interface BasecodeStockList : UITableViewController
-<ZBarReaderDelegate>
+<ZBarReaderDelegate,UIPopoverControllerDelegate,ConditionMakerControllerDelegate>
 {
     
     DataSetRequest *request;
@@ -19,10 +20,12 @@
     
     @private NSArray *colors;
 
+    UIPopoverController *searchPopOver;
 }
 
 @property (nonatomic,strong) NSArray *dataList;
 @property (nonatomic,strong) NSArray *colors;
 @property (nonatomic,strong) NSDictionary *conditions;
+@property (nonatomic,strong) UIPopoverController *searchPopOver;
 
 @end

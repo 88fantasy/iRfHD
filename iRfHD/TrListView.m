@@ -22,7 +22,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
 @implementation TrListView
 
 @synthesize menuList,refreshButtonItem;
-@synthesize filteredListContent, savedSearchTerm, savedScopeButtonIndex, searchWasActive;
+@synthesize filteredListContent, savedSearchTerm, savedScopeButtonIndex, searchWasActive,searchController;
 @synthesize titleSegmentIndex,titleArray,titleBtn;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -59,15 +59,6 @@ static NSString *kTitlePrefix = @"货品对应关系";
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (void) alert:(NSString*)title msg:(NSString*)msg {
-    // open an alert with just an OK button
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:msg
-                                                   delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];	
-}
-
-
-
 #pragma mark - View lifecycle
 
 
@@ -88,8 +79,9 @@ static NSString *kTitlePrefix = @"货品对应关系";
     
     self.titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.titleBtn setTitle:[NSString stringWithFormat:@"%@[全部▾]",kTitlePrefix] forState:UIControlStateNormal];
+    [self.titleBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal] ;
     [self.titleBtn addTarget:self action:@selector(showConditionList) forControlEvents:UIControlEventTouchUpInside];
-    self.titleBtn.frame = CGRectMake(0, 0, 200, 31);
+    self.titleBtn.frame = CGRectMake(0, 0, 300, 31);
     [self.titleBtn setCenter:self.navigationItem.titleView.center];
     self.navigationItem.titleView = self.titleBtn;
 //    [testbtn release];
@@ -97,13 +89,13 @@ static NSString *kTitlePrefix = @"货品对应关系";
 	// restore search settings if they were saved in didReceiveMemoryWarning.
     if (self.savedSearchTerm)
 	{
-        [self.searchDisplayController setActive:self.searchWasActive];
-        [self.searchDisplayController.searchBar setSelectedScopeButtonIndex:self.savedScopeButtonIndex];
-        [self.searchDisplayController.searchBar setText:savedSearchTerm];
+        [self.searchController setActive:self.searchWasActive];
+        [self.searchController.searchBar setSelectedScopeButtonIndex:self.savedScopeButtonIndex];
+        [self.searchController.searchBar setText:savedSearchTerm];
         
         self.savedSearchTerm = nil;
     }
-	self.searchDisplayController.searchBar.placeholder = NSLocalizedString(@"Search", @"Search");
+	self.searchController.searchBar.placeholder = NSLocalizedString(@"Search", @"Search");
 	[self.tableView reloadData];
     
 }
@@ -115,7 +107,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
     NSDictionary *row = nil;
     NSMutableArray *list = nil;
     NSInteger count = 0;
-    if (tableView == self.searchDisplayController.searchResultsTableView)
+    if (tableView == self.searchController.searchResultsTableView)
 	{
         list =  self.filteredListContent;
     }
@@ -157,7 +149,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
     // Return the number of rows in the section.
     NSMutableArray *list = nil;
     NSInteger count = 0;
-    if (tableView == self.searchDisplayController.searchResultsTableView)
+    if (tableView == self.searchController.searchResultsTableView)
 	{
         list =  self.filteredListContent;
     }
@@ -258,9 +250,9 @@ static NSString *kTitlePrefix = @"货品对应关系";
 - (void)viewDidDisappear:(BOOL)animated
 {
     // save the state of the search UI so that it can be restored if the view is re-created
-    self.searchWasActive = [self.searchDisplayController isActive];
-    self.savedSearchTerm = [self.searchDisplayController.searchBar text];
-    self.savedScopeButtonIndex = [self.searchDisplayController.searchBar selectedScopeButtonIndex];
+    self.searchWasActive = [self.searchController isActive];
+    self.savedSearchTerm = [self.searchController.searchBar text];
+    self.savedScopeButtonIndex = [self.searchController.searchBar selectedScopeButtonIndex];
     
 }
 
@@ -325,8 +317,8 @@ static NSString *kTitlePrefix = @"货品对应关系";
         
         
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id json = [parser objectWithString:result];
+        NSError *error = nil;
+        id json = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         
         
         if (json != nil) {
@@ -337,7 +329,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
                 NSArray *rows = (NSArray*) [ret objectForKey:kMsgKey];
                 NSUInteger count = [rows count];
                 if (count <1) {
-                    [self alert:@"提示" msg:@"没有找到货品关系"];
+                    [CommonUtil alert:@"提示" msg:@"没有找到货品关系"];
                 }
                 else{
                     
@@ -372,7 +364,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
                 if ([msg isKindOfClass:[NSNull class]]) {
                     msg = @"空指针";
                 }
-                [self alert:NSLocalizedString(@"Error",@"Error") msg:msg];
+                [CommonUtil alert:NSLocalizedString(@"Error",@"Error") msg:msg];
             }
             
         }
@@ -449,7 +441,7 @@ static NSString *kTitlePrefix = @"货品对应关系";
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
     [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
+     [[self.searchController.searchBar scopeButtonTitles] objectAtIndex:[self.searchController.searchBar selectedScopeButtonIndex]]];
     
     // Return YES to cause the search result table view to be reloaded.
     return YES;
@@ -458,8 +450,8 @@ static NSString *kTitlePrefix = @"货品对应关系";
 
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
 {
-    [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
+    [self filterContentForSearchText:[self.searchController.searchBar text] scope:
+     [[self.searchController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
     
     // Return YES to cause the search result table view to be reloaded.
     return YES;

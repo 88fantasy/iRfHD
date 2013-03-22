@@ -191,7 +191,7 @@ enum {
         
         BasecodeStockList *basecodeStockList = [[BasecodeStockList alloc]initWithStyle:UITableViewStylePlain];
         [self.menuList addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                  @"库存查询(零售条码)", kTitleKey,
+                                  @"库存查询", kTitleKey,
                                   @"通过扫描货品零售条码来查询当前库存", kExplainKey,
                                   basecodeStockList, kViewControllerKey,
                                   @"kccx.png",iconKey,
@@ -388,8 +388,8 @@ enum {
         
         
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id json = [parser objectWithString:result];
+        NSError *error = nil;
+        id json = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         
         
         if (json != nil) {
@@ -549,8 +549,8 @@ enum {
         NSString* result = (NSString*)value;
         NSLog(@"doRg returned the value: %@", result);
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id retObj = [parser objectWithString:result];
+        NSError *error = nil;
+        id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         NSLog(@"%@",retObj);
         
         doneDoRgCoount ++;

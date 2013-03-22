@@ -182,8 +182,8 @@ NSString* const QRCodeRgReaderCellIdentifier = @"QRCodeRgReaderCell";
 -(void) reloadByJson:(NSString*)json
 {
     
-    SBJsonParser *parser = [[SBJsonParser alloc]init];
-    id obj = [parser objectWithString:json];
+    NSError *error = nil;
+    id obj = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
     if (obj != nil) {
         NSDictionary *dict = (NSDictionary*)obj;
         NSMutableArray *array = [NSMutableArray array];
@@ -240,9 +240,9 @@ NSString* const QRCodeRgReaderCellIdentifier = @"QRCodeRgReaderCell";
         // Do something with the NSString* result
         NSString* result = (NSString*)value;
         NSLog(@"sendJsonHandler returned the value: %@", result);
-        id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil ];
-//        SBJsonParser *parser = [[SBJsonParser alloc] init];
-//        id retObj = [parser objectWithString:result];
+        
+        NSError *error = nil;
+        id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         NSLog(@"%@",retObj);
         
         
@@ -265,6 +265,9 @@ NSString* const QRCodeRgReaderCellIdentifier = @"QRCodeRgReaderCell";
                 [CommonUtil alert:NSLocalizedString(@"Error", @"Error")
                               msg:msg];
             }
+        }
+        else {
+            [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:[error localizedDescription]];
         }
     }
 }

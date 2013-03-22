@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F5E062316F9AFC0006ED91B /* ConditionMakerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5E062216F9AFC0006ED91B /* ConditionMakerController.m */; };
 		8F6B911316F6B91500A65281 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6B911216F6B91500A65281 /* UIKit.framework */; };
 		8F6B911516F6B91500A65281 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6B911416F6B91500A65281 /* Foundation.framework */; };
 		8F6B911716F6B91500A65281 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6B911616F6B91500A65281 /* CoreGraphics.framework */; };
@@ -158,27 +159,25 @@
 		8F6B934516F6FB6C00A65281 /* RgListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B931C16F6FB5A00A65281 /* RgListView.m */; };
 		8F6B934616F6FB6C00A65281 /* RgListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B931D16F6FB5B00A65281 /* RgListView.xib */; };
 		8F6B934716F6FB6C00A65281 /* RgView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B931F16F6FB5C00A65281 /* RgView.m */; };
-		8F6B934816F6FB6C00A65281 /* RgView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B932016F6FB5D00A65281 /* RgView.xib */; };
 		8F6B934916F6FB6C00A65281 /* RgViewHD.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B932116F6FB5D00A65281 /* RgViewHD.xib */; };
 		8F6B934A16F6FB6C00A65281 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B932316F6FB5F00A65281 /* RootViewController.m */; };
 		8F6B934C16F6FB6C00A65281 /* ScanOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B932616F6FB6100A65281 /* ScanOverlayView.m */; };
 		8F6B934D16F6FB6C00A65281 /* ScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B932816F6FB6200A65281 /* ScanView.m */; };
-		8F6B934E16F6FB6C00A65281 /* ScanView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B932916F6FB6300A65281 /* ScanView.xib */; };
 		8F6B934F16F6FB6C00A65281 /* ScanViewHD.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B932A16F6FB6300A65281 /* ScanViewHD.xib */; };
 		8F6B935016F6FB6C00A65281 /* SettingListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B932C16F6FB6500A65281 /* SettingListView.m */; };
 		8F6B935116F6FB6C00A65281 /* StockAdjustView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B932E16F6FB6600A65281 /* StockAdjustView.m */; };
-		8F6B935216F6FB6C00A65281 /* StockAdjustView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B932F16F6FB6700A65281 /* StockAdjustView.xib */; };
 		8F6B935316F6FB6C00A65281 /* StockAdjustViewHD.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B933016F6FB6700A65281 /* StockAdjustViewHD.xib */; };
 		8F6B935416F6FB6C00A65281 /* TrListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B933216F6FB6800A65281 /* TrListView.m */; };
 		8F6B935516F6FB6C00A65281 /* TrListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B933316F6FB6900A65281 /* TrListView.xib */; };
 		8F6B935616F6FB6C00A65281 /* TrView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B933516F6FB6A00A65281 /* TrView.m */; };
-		8F6B935716F6FB6C00A65281 /* TrView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B933616F6FB6B00A65281 /* TrView.xib */; };
 		8F6B935816F6FB6C00A65281 /* TrViewHD.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8F6B933716F6FB6C00A65281 /* TrViewHD.xib */; };
 		8FA9716C16F7157C00A7F450 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FA9716B16F7157C00A7F450 /* RootViewController.xib */; };
 		8FA9716F16F8116200A7F450 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA9716E16F8116200A7F450 /* ViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F5E062116F9AFC0006ED91B /* ConditionMakerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionMakerController.h; sourceTree = "<group>"; };
+		8F5E062216F9AFC0006ED91B /* ConditionMakerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConditionMakerController.m; sourceTree = "<group>"; };
 		8F6B910F16F6B91500A65281 /* iRfHD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iRfHD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F6B911216F6B91500A65281 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8F6B911416F6B91500A65281 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -437,7 +436,6 @@
 		8F6B931D16F6FB5B00A65281 /* RgListView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RgListView.xib; sourceTree = "<group>"; };
 		8F6B931E16F6FB5B00A65281 /* RgView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RgView.h; sourceTree = "<group>"; };
 		8F6B931F16F6FB5C00A65281 /* RgView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RgView.m; sourceTree = "<group>"; };
-		8F6B932016F6FB5D00A65281 /* RgView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RgView.xib; sourceTree = "<group>"; };
 		8F6B932116F6FB5D00A65281 /* RgViewHD.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RgViewHD.xib; sourceTree = "<group>"; };
 		8F6B932216F6FB5E00A65281 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		8F6B932316F6FB5F00A65281 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
@@ -445,20 +443,17 @@
 		8F6B932616F6FB6100A65281 /* ScanOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanOverlayView.m; sourceTree = "<group>"; };
 		8F6B932716F6FB6100A65281 /* ScanView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanView.h; sourceTree = "<group>"; };
 		8F6B932816F6FB6200A65281 /* ScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanView.m; sourceTree = "<group>"; };
-		8F6B932916F6FB6300A65281 /* ScanView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScanView.xib; sourceTree = "<group>"; };
 		8F6B932A16F6FB6300A65281 /* ScanViewHD.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScanViewHD.xib; sourceTree = "<group>"; };
 		8F6B932B16F6FB6400A65281 /* SettingListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingListView.h; sourceTree = "<group>"; };
 		8F6B932C16F6FB6500A65281 /* SettingListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingListView.m; sourceTree = "<group>"; };
 		8F6B932D16F6FB6500A65281 /* StockAdjustView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StockAdjustView.h; sourceTree = "<group>"; };
 		8F6B932E16F6FB6600A65281 /* StockAdjustView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StockAdjustView.m; sourceTree = "<group>"; };
-		8F6B932F16F6FB6700A65281 /* StockAdjustView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockAdjustView.xib; sourceTree = "<group>"; };
 		8F6B933016F6FB6700A65281 /* StockAdjustViewHD.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockAdjustViewHD.xib; sourceTree = "<group>"; };
 		8F6B933116F6FB6800A65281 /* TrListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrListView.h; sourceTree = "<group>"; };
 		8F6B933216F6FB6800A65281 /* TrListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrListView.m; sourceTree = "<group>"; };
 		8F6B933316F6FB6900A65281 /* TrListView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrListView.xib; sourceTree = "<group>"; };
 		8F6B933416F6FB6A00A65281 /* TrView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrView.h; sourceTree = "<group>"; };
 		8F6B933516F6FB6A00A65281 /* TrView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrView.m; sourceTree = "<group>"; };
-		8F6B933616F6FB6B00A65281 /* TrView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrView.xib; sourceTree = "<group>"; };
 		8F6B933716F6FB6C00A65281 /* TrViewHD.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrViewHD.xib; sourceTree = "<group>"; };
 		8FA9716B16F7157C00A7F450 /* RootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RootViewController.xib; sourceTree = "<group>"; };
 		8FA9716D16F8116200A7F450 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -581,26 +576,22 @@
 				8F6B931D16F6FB5B00A65281 /* RgListView.xib */,
 				8F6B931E16F6FB5B00A65281 /* RgView.h */,
 				8F6B931F16F6FB5C00A65281 /* RgView.m */,
-				8F6B932016F6FB5D00A65281 /* RgView.xib */,
 				8F6B932116F6FB5D00A65281 /* RgViewHD.xib */,
 				8F6B932516F6FB6000A65281 /* ScanOverlayView.h */,
 				8F6B932616F6FB6100A65281 /* ScanOverlayView.m */,
 				8F6B932716F6FB6100A65281 /* ScanView.h */,
 				8F6B932816F6FB6200A65281 /* ScanView.m */,
-				8F6B932916F6FB6300A65281 /* ScanView.xib */,
 				8F6B932A16F6FB6300A65281 /* ScanViewHD.xib */,
 				8F6B932B16F6FB6400A65281 /* SettingListView.h */,
 				8F6B932C16F6FB6500A65281 /* SettingListView.m */,
 				8F6B932D16F6FB6500A65281 /* StockAdjustView.h */,
 				8F6B932E16F6FB6600A65281 /* StockAdjustView.m */,
-				8F6B932F16F6FB6700A65281 /* StockAdjustView.xib */,
 				8F6B933016F6FB6700A65281 /* StockAdjustViewHD.xib */,
 				8F6B933116F6FB6800A65281 /* TrListView.h */,
 				8F6B933216F6FB6800A65281 /* TrListView.m */,
 				8F6B933316F6FB6900A65281 /* TrListView.xib */,
 				8F6B933416F6FB6A00A65281 /* TrView.h */,
 				8F6B933516F6FB6A00A65281 /* TrView.m */,
-				8F6B933616F6FB6B00A65281 /* TrView.xib */,
 				8F6B933716F6FB6C00A65281 /* TrViewHD.xib */,
 				8F6B911916F6B91500A65281 /* Supporting Files */,
 			);
@@ -1009,6 +1000,8 @@
 				8F6B928716F6BD1B00A65281 /* DbUtil.m */,
 				8F6B928816F6BD1B00A65281 /* Reachability.h */,
 				8F6B928916F6BD1B00A65281 /* Reachability.m */,
+				8F5E062116F9AFC0006ED91B /* ConditionMakerController.h */,
+				8F5E062216F9AFC0006ED91B /* ConditionMakerController.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1134,14 +1127,10 @@
 				8F6B934216F6FB6C00A65281 /* RgGroupListView.xib in Resources */,
 				8F6B934416F6FB6C00A65281 /* RgListSearchView.xib in Resources */,
 				8F6B934616F6FB6C00A65281 /* RgListView.xib in Resources */,
-				8F6B934816F6FB6C00A65281 /* RgView.xib in Resources */,
 				8F6B934916F6FB6C00A65281 /* RgViewHD.xib in Resources */,
-				8F6B934E16F6FB6C00A65281 /* ScanView.xib in Resources */,
 				8F6B934F16F6FB6C00A65281 /* ScanViewHD.xib in Resources */,
-				8F6B935216F6FB6C00A65281 /* StockAdjustView.xib in Resources */,
 				8F6B935316F6FB6C00A65281 /* StockAdjustViewHD.xib in Resources */,
 				8F6B935516F6FB6C00A65281 /* TrListView.xib in Resources */,
-				8F6B935716F6FB6C00A65281 /* TrView.xib in Resources */,
 				8F6B935816F6FB6C00A65281 /* TrViewHD.xib in Resources */,
 				8FA9716C16F7157C00A7F450 /* RootViewController.xib in Resources */,
 			);
@@ -1237,6 +1226,7 @@
 				8F6B935416F6FB6C00A65281 /* TrListView.m in Sources */,
 				8F6B935616F6FB6C00A65281 /* TrView.m in Sources */,
 				8FA9716F16F8116200A7F450 /* ViewController.m in Sources */,
+				8F5E062316F9AFC0006ED91B /* ConditionMakerController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

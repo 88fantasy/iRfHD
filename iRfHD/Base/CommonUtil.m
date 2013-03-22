@@ -139,9 +139,13 @@ static NSHTTPCookie *_session;
             NSLog(@"login return : %@",responseString);
             NSString *success = [nsd objectForKey:@"success"];
             
-            if (![success boolValue]) {
+            if ([success boolValue]) {
+//                [CommonUtil alert:NSLocalizedString(@"Info", @"Info") msg:@"登陆成功"];
+            }
+            else {
                 [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:[nsd objectForKey:@"error"]];
-            }        }
+            }
+        }
         
     }
     return _session;

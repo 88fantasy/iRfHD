@@ -53,9 +53,9 @@ static NSString *kCellIdentifier = @"MyIdentifier";
     
     UIBarButtonItem *searchbtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch                                                                          target:self action:@selector(setSearchJson:)];
     
-    UIBarButtonItem *actionbtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize                                                                          target:self action:@selector(groupAction)];
+//    UIBarButtonItem *actionbtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize                                                                          target:self action:@selector(groupAction)];
     
-    [self.navigationItem setRightBarButtonItems:[NSArray arrayWithObjects: searchbtn,actionbtn,nil] animated:YES];
+    [self.navigationItem setRightBarButtonItems:[NSArray arrayWithObjects: searchbtn,nil] animated:YES];
     
     
 }
@@ -393,8 +393,8 @@ static NSString *kCellIdentifier = @"MyIdentifier";
         
         
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id json = [parser objectWithString:result];
+        NSError *error = nil;
+        id json = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         
         
         if (json != nil) {

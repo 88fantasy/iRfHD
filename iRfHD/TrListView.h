@@ -29,7 +29,7 @@ typedef NS_ENUM (NSInteger,TrListTitleSeg){
     NSInteger		savedScopeButtonIndex;
     BOOL			searchWasActive;
     NSMutableArray	*filteredListContent;	// The content filtered as a result of a search.
-    UISearchDisplayController *seachDispalyController;
+    UISearchDisplayController *searchController;
     UITableView *tablelistView;
     
     NSInteger   titleSegmentIndex;
@@ -41,6 +41,7 @@ typedef NS_ENUM (NSInteger,TrListTitleSeg){
 @property (nonatomic, strong) UIBarButtonItem *refreshButtonItem;
 
 @property (nonatomic, strong) NSMutableArray *filteredListContent;
+@property (nonatomic, strong) IBOutlet UISearchDisplayController *searchController;
 
 @property (nonatomic, copy) NSString *savedSearchTerm;
 @property (nonatomic) NSInteger savedScopeButtonIndex;

@@ -382,8 +382,8 @@ typedef NS_OPTIONS(NSUInteger, SettingListSectionTypeExtraRow) {
         NSString* result = (NSString*)value;
         NSLog(@"test returned the value: %@", result);
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id retObj = [parser objectWithString:result];
+        NSError *error = nil;
+        id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         NSLog(@"%@",retObj);
         
         if (retObj != nil) {
@@ -404,6 +404,7 @@ typedef NS_OPTIONS(NSUInteger, SettingListSectionTypeExtraRow) {
 
 -(void)loginSuccess
 {
+    [CommonUtil alert:NSLocalizedString(@"Info", @"Info")  msg:@"登陆成功"];
     [self setLoginStatus:YES];
     [self doSaveSetting:nil];
 }

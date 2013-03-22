@@ -8,18 +8,41 @@
 
 #import "ConditionMakerController.h"
 
+#define kTextFieldWidth 250
+#define kTextFieldHeight 40
+
 @interface ConditionMakerController ()
 
 @end
 
+static NSString *cmcCellIdentifier = @"ConditionMakerControllerCell";
+
 @implementation ConditionMakerController
+
+@synthesize fieldDictionaryList;
+@synthesize delegate;
+@synthesize controllermode;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        self.tableView.allowsSelection = NO;
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.fieldDictionaryList = [NSArray array];
+        controllermode = ConditionMakerModeSingle;
+        
+        _fieldValues = [NSMutableDictionary dictionary];
     }
+    return self;
+}
+
++ (id)controllerWithMode:(ConditionMakerMode)mode style:(UITableViewStyle)style fields:(NSArray*)fieldlist
+{
+    ConditionMakerController *cmc = [[ConditionMakerController alloc] initWithStyle:style];
+    cmc.fieldDictionaryList = fieldlist;
+    cmc.controllermode = mode;
     return self;
 }
 
@@ -32,6 +55,7 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,78 +68,140 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    if (self.fieldDictionaryList){
+        return self.fieldDictionaryList.count;
+    }
+    else {
+        return 0;
+    }
 }
+
+//-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return kTextFieldHeight;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cmcCellIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cmcCellIdentifier];
+    }
+    
+    NSDictionary *row = [self.fieldDictionaryList objectAtIndex:indexPath.row];
+    NSString *fieldname = [row objectForKey:kConditionMakerFieldNameKey];
+    NSString *title = [row objectForKey:kConditionMakerFieldTextKey];
+    NSNumber *type = [row objectForKey:kConditionMakerInputTypeKey];
+    if (type == nil) {
+        type = [NSNumber numberWithInteger:ConditionMakerInputTypeText];
+    }
+    cell.textLabel.text = title;
+    CGRect rect = cell.frame;
+    rect.size.width = rect.size.width * 0.6;
+    rect.origin.y = 9;
+    switch ([type integerValue]) {
+        case ConditionMakerInputTypeText:
+            rect.size.height = 31;
+            cell.accessoryView = [self createTextFieldWithFrame:rect fieldname:fieldname];
+            break;
+            
+        default:
+            break;
+    }
+    
+    UIView *view = cell.accessoryView;
+    if (view != nil) {
+        view.tag = indexPath.row;
+    }
     
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark -
+#pragma mark create textfield
+-(UITextField*)createTextFieldWithFrame:(CGRect)frame fieldname:(NSString*)fieldname
 {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+//    CGRect frame = CGRectMake(0, 0, kTextFieldWidth, kTextFieldHeight);
+    UITextField *textfield = [[UITextField alloc] initWithFrame:frame];
+    textfield.accessibilityIdentifier = fieldname;
+    textfield.borderStyle = UITextBorderStyleRoundedRect;
+//    textfield.textColor = [UIColor blackColor];
+//    textfield.font = [UIFont systemFontOfSize:kFontSize];
+//    textfield.backgroundColor = [UIColor whiteColor];
+    textfield.autocorrectionType = UITextAutocorrectionTypeNo;	// no auto correction support
+    textfield.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+    UIViewAutoresizingFlexibleTopMargin |
+    UIViewAutoresizingFlexibleRightMargin |
+    UIViewAutoresizingFlexibleWidth;
+    
+    if (controllermode == ConditionMakerModeSingle) {
+        textfield.returnKeyType = UIReturnKeySearch;
+    }
+    else {
+        textfield.returnKeyType = UIReturnKeyDone;
+    }
+    
+    textfield.clearButtonMode = UITextFieldViewModeWhileEditing;	// has a clear 'x' button to the right
+    
+    textfield.delegate = self;
+    
+    return textfield;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark -
+#pragma mark - TextField delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+	// the user pressed the "Done" button, so dismiss the keyboard
+	[textField resignFirstResponder];
+    if (controllermode == ConditionMakerModeSingle) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(conditionDidMaked:)]) {
+            NSDictionary *condition = @{textField.accessibilityIdentifier:textField.text};
+            [self.delegate performSelector:@selector(conditionDidMaked:) withObject:condition];
+        }
+    }
+	return YES;
 }
-*/
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+- (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y) animated:YES];
 }
-*/
 
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+-(void)textFieldDidEndEditing:(UITextField *)textField
 {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
+    if (controllermode == ConditionMakerModeMulti) {
+        if ([@"" isEqualToString:textField.text]) {
+            [_fieldValues removeObjectForKey:textField.accessibilityIdentifier];
+        }
+        else {
+            [_fieldValues setObject:textField.text forKey:textField.accessibilityIdentifier];
+        }
+    }
 }
-*/
 
-#pragma mark - Table view delegate
+//-(void)viewDidDisappear:(BOOL)animated
+//{
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(conditionDidMaked:)]) {
+//        [self.delegate performSelector:@selector(conditionDidMaked) withObject:[self getConditions]];
+//    }
+//}
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark -
+#pragma mark getcondition or delegate
+-(NSDictionary*)getConditions
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    return _fieldValues;
 }
 
 @end

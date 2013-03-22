@@ -392,8 +392,8 @@ static NSString *kObjKey = @"obj";
         
         
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id json = [parser objectWithString:result];
+        NSError *error = nil;
+        id json = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         
         
         if (json != nil) {
@@ -655,8 +655,8 @@ static NSString *kObjKey = @"obj";
         NSString* result = (NSString*)value;
         NSLog(@"doRg returned the value: %@", result);
         
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        id retObj = [parser objectWithString:result];
+        NSError *error = nil;
+        id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         NSLog(@"%@",retObj);
         
         doneDoRgCoount ++;

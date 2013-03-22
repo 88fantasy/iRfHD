@@ -20,8 +20,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [application setApplicationIconBadgeNumber:0];
     
+    [application setStatusBarStyle:UIStatusBarStyleBlackTranslucent];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
@@ -30,6 +31,7 @@
     self.navigationController = [[ViewController alloc] initWithRootViewController:root];
     
     self.navigationController.delegate = self;
+//    self.navigationController.navigationBar.tintColor = [UIColor lightGrayColor];
     
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
@@ -156,8 +158,12 @@
     
     NSLog(@"Version check result string is :%@",result);
     
-    SBJsonParser *parser = [[SBJsonParser alloc] init];
-    id retObj = [parser objectWithString:result];
+    if ([@"" isEqualToString:[result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]]) {
+        return;
+    }
+    NSError *error = nil;
+    
+    id retObj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
     
     if (retObj != nil) {
         NSLog(@"%@",retObj);
@@ -179,7 +185,9 @@
         }
 		[alert show];
     }
-    
+    else {
+        [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:[error localizedDescription]];
+    }
 }
 
 #pragma mark -

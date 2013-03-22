@@ -20,6 +20,7 @@
 @synthesize dataList;
 @synthesize colors;
 @synthesize conditions;
+@synthesize searchPopOver;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -61,23 +62,37 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     
-    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(scanAction:)];
+    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera target:self action:@selector(scanAction:)];    
+    
+    UIBarButtonItem *searchbtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(showSearchPopOver:)];
+
+    [self.navigationItem setRightBarButtonItems:@[button,searchbtn]];
     
     
-    self.navigationItem.rightBarButtonItem = button;
+    ConditionMakerController *content = [[ConditionMakerController alloc]initWithStyle:UITableViewStylePlain];
+    content.fieldDictionaryList = @[
+                                    @{kConditionMakerFieldNameKey: @"hisgdsid",
+                                      kConditionMakerFieldTextKey: @"货品码"},
+                                    @{kConditionMakerFieldNameKey: @"goodsname",
+                                      kConditionMakerFieldTextKey: @"货品名称"},
+                                    @{kConditionMakerFieldNameKey: @"goodspy",
+                                      kConditionMakerFieldTextKey: @"货品拼音"},
+                                    
+                                    ];
+    content.delegate = self;
     
+    self.searchPopOver = [[UIPopoverController alloc] initWithContentViewController:content];
+    self.searchPopOver.popoverContentSize = CGSizeMake(320., 320.);
+    self.searchPopOver.delegate = self;
     
     self.dataList = [NSArray array];
     
-   
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
-//    if (self.currentCode == nil) {
-//        [self scanAction:nil];
-//    }
-}
+//-(void)viewDidAppear:(BOOL)animated
+//{
+//
+//}
 
 
 - (void)didReceiveMemoryWarning
@@ -120,8 +135,24 @@
     
     NSString *sql = [NSString stringWithFormat: @"select *   from (select 1 gp,b.hisgdsid,b.goodsname,(select dd_value   from sys_datadictionary x  where x.dd_key = 'STORAGENAME'    and dd_id = a.storagename) storagename,decode(a.downgraded, 0, b.goodsunit, b.downgradeunit) goodsunit,round(decode(a.downgraded,       0,       a.goodsqty,       a.goodsqty /       decode(nvl(b.downgradeqty, 1),     0,     1,     nvl(b.downgradeqty, 1))),2) baseqty,a.goodsqty  from hscm_stock_sum a, hscm_goods b where a.hisgdsid = b.hisgdsid union all select decode(a1.iotypedtl, '11', 2, '21', 3),b1.hisgdsid,max(c1.goodsname),to_char(a1.credate,'yyyy-mm'),max(c1.goodsunit),round(sum((case    when nvl(b1.downgraded, 0) = 0 then     b1.goodsqty    else  b1.goodsqty / c1.downgradeqty end))),0  from hscm_inout_doc a1, hscm_inout_dtl b1, hscm_goods c1 where a1.inoutid = b1.inoutid   and b1.completed = 1   and a1.iotypedtl in (11, 21)   and b1.hisgdsid = c1.hisgdsid   and getusemm(a1.credate) >= getusemm(sysdate) - 4 group by b1.hisgdsid, a1.iotypedtl,to_char(a1.credate,'yyyy-mm'))  where 1 = 1 "];
     
-    if ([conditions objectForKey:@"basecode"]) {
-        sql = [sql stringByAppendingFormat:@" hisgdsid in (select edis_hisgdsid from edis_goods_translate where barcode = '%@')", [conditions objectForKey:@"basecode"]];
+    if (self.conditions) {
+    
+        NSString *basecode = [conditions objectForKey:@"basecode"];
+        if (basecode != nil && ![@"" isEqualToString:basecode]) {
+            sql = [sql stringByAppendingFormat:@" and hisgdsid in (select edis_hisgdsid from edis_goods_translate where barcode = '%@')", basecode];
+        }
+        NSString *hisgdsid = [conditions objectForKey:@"hisgdsid"];
+        if (hisgdsid != nil && ![@"" isEqualToString:hisgdsid]) {
+            sql = [sql stringByAppendingFormat:@" and hisgdsid like '%@%%'", hisgdsid];
+        }
+        NSString *goodsname = [conditions objectForKey:@"goodsname"];
+        if (goodsname != nil && ![@"" isEqualToString:goodsname]) {
+            sql = [sql stringByAppendingFormat:@" and goodsname like '%@%%'", goodsname];
+        }
+        NSString *goodspy = [conditions objectForKey:@"goodspy"];
+        if (goodspy != nil && ![@"" isEqualToString:goodspy]) {
+            sql = [sql stringByAppendingFormat:@" and pub_get_py(goodsname) like '%@%%'", [goodspy uppercaseString]];
+        }
     }
     
     sql = [sql stringByAppendingString:@" order by hisgdsid , gp asc"];
@@ -157,8 +188,8 @@
     NSString* result = (NSString*)value;
 	NSLog(@"getStockHandle returned the value: %@", result);
     
-    SBJsonParser *parser = [[SBJsonParser alloc] init];
-    id retObj = [parser objectWithString:result];
+    NSError *error = nil;
+    id retObj = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
     NSLog(@"%@",retObj);    
     if (retObj != nil) {
         NSDictionary *ret = (NSDictionary*)retObj;
@@ -210,6 +241,9 @@
         }
         
     }
+    else {
+        [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:[error localizedDescription]];
+    }
     [self.tableView reloadData];
     [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
 }
@@ -259,13 +293,13 @@
     [self getStock];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *) reader
-{
-    [reader dismissViewControllerAnimated:YES completion:nil];
-    if (self.dataList.count < 1) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-}
+//- (void)imagePickerControllerDidCancel:(UIImagePickerController *) reader
+//{
+//    [reader dismissViewControllerAnimated:YES completion:nil];
+//    if (self.dataList.count < 1) {
+//        [self.navigationController popViewControllerAnimated:YES];
+//    }
+//}
 
 #pragma mark -
 #pragma mark  refresh handle
@@ -493,5 +527,41 @@
 	
     return cell;
 }
+
+
+#pragma mark -
+#pragma mark popover handler
+
+-(void)showSearchPopOver:(UIBarButtonItem*)sender
+{
+    // If the popover is already showing from the bar button item, dismiss it. Otherwise, present it.
+	if (self.searchPopOver.popoverVisible == NO) {
+		[self.searchPopOver presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+	}
+	else {
+		[self.searchPopOver dismissPopoverAnimated:YES];
+	}
+}
+
+
+#pragma mark -
+#pragma mark ConditionMakerControllerDelegate
+-(void)conditionDidMaked:(NSDictionary*)makedconditions
+{
+    [self.searchPopOver dismissPopoverAnimated:YES];
+    self.conditions = makedconditions;
+    [self getStock];
+}
+
+
+//#pragma mark -
+//#pragma mark UIPopoverControllerDelegate
+//- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+//{
+//    ConditionMakerController *cmc = (ConditionMakerController*)[popoverController contentViewController];
+//    NSDictionary *cds = [cmc getConditions];
+//    
+//    
+//}
 
 @end
