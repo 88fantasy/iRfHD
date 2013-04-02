@@ -30,6 +30,10 @@
 
 + (NSHTTPCookie*) getSessionByUsername:(NSString*)username password:(NSString*)password;
 
++ (NSString *) stringFromDate:(NSDate *)date;
+
++ (NSString *) stringFromDateTime:(NSDate *)date;
+
 @end
 
 

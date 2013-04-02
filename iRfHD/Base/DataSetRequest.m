@@ -8,6 +8,10 @@
 
 #import "DataSetRequest.h"
 
+static NSString const * DataSetRequestServletUrl = @"/extjsgridQueryServlet/";
+static NSString const * DataSetRequestActionQuery = @"query";
+//static NSString const * DataSetRequestActionInit = @"init";
+//static NSString const * DataSetRequestDownloadServletUrl = @"/downloadservlet";
 
 @implementation DataSetRequest
 
@@ -23,106 +27,153 @@
 
 @synthesize sessionId;
 @synthesize base;
-@synthesize  SERVLET_URL;
-@synthesize  ACTION_INIT;
-@synthesize  ACTION_QUERY;
-@synthesize  ACTION_DOWNLOAD;
 
 @synthesize delegate;
+@synthesize userInfo;
+@synthesize pagecount;
+
+//-(id)initWithGridcode:(NSString *)_gridcode
+//{
+//    self = [super init];
+//    if (self) {
+//        self.gridcode = _gridcode;
+//        
+//        self.base = [CommonUtil getLocalServerBase];
+//        
+//        NSString *httpUrl = [[NSString alloc]initWithFormat:@"%@%@%@", self.base , DataSetRequestServletUrl , DataSetRequestActionInit];
+//        NSURL *url = [NSURL URLWithString:httpUrl];
+//        ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
+//        [request setPostValue:self.gridcode forKey:@"gridcode"];
+//        
+//        [request setTimeOutSeconds:20];
+//        
+//        [request setUseCookiePersistence:NO];
+//        [request setRequestCookies:[NSMutableArray arrayWithObject:[CommonUtil getSession]]];
+//        [request startSynchronous];
+//        NSError *error  = [request error];
+//        if (!error) {
+//            NSString *responseString = [request responseString];
+//            NSLog(@"gridcode[%@] init return : %@",self.gridcode,responseString);
+//            NSError *parseError = nil;
+//            NSDictionary *nsd = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&parseError];
+//            if (nsd == nil) {
+//                [CommonUtil alert:@"翻译json错误" msg:[parseError localizedDescription]];
+//                return nil;
+//            }
+//            NSString *errormsg = [nsd objectForKey:@"error"];
+//            if (errormsg) {
+//                [CommonUtil alert:[NSString stringWithFormat:@"初始化%@出现错误",self.gridcode] msg:errormsg];
+//            }
+//            else {
+//                self.dataSource = [nsd objectForKey:@"dataSource"];
+//                self.queryType = [nsd objectForKey:@"queryType"];
+//                self.querymoduleid = [nsd objectForKey:@"querymoduleid"];
+//                self.sumfieldnames = [nsd objectForKey:@"sumfieldnames"];
+//                self.pagerownum = [nsd objectForKey:@"pageRowNum"];
+//                id needpagecount = [nsd objectForKey:@"needpagecount"];
+//                self.pagecount = needpagecount == nil || needpagecount == [NSNull null] ? NO : [needpagecount boolValue] ;
+//                self.conditions = [NSMutableArray array];
+//            }
+//        }
+//        else {
+//            [CommonUtil alert:[NSString stringWithFormat:@"初始化%@出现错误",self.gridcode] msg: [error localizedDescription]];
+//        }
+//    }
+//	return self;
+//}
 
 -(id)initWithGridcode:(NSString *)_gridcode querytype:(NSString *)_queryType
 			  datasource:(NSString *)_dataSource querymoduleid:(NSString *)_querymoduleid sumfieldnames:(NSString *)_sumfieldnames
 {
-	self.gridcode = _gridcode;
-	self.queryType = _queryType;
-	self.dataSource = _dataSource;
-	self.querymoduleid = _querymoduleid;
-	self.sumfieldnames = _sumfieldnames;
-	self.conditions = [[NSMutableArray alloc]init];
-	
-	self.ACTION_QUERY = @"query";
-	self.SERVLET_URL = @"/extjsgridQueryServlet/";
-	self.ACTION_DOWNLOAD = @"/downloadservlet";
-	self.base = [CommonUtil getLocalServerBase];
+    self = [super init];
+    if (self) {
+        self.gridcode = _gridcode;
+        self.queryType = _queryType;
+        self.dataSource = _dataSource;
+        self.querymoduleid = _querymoduleid;
+        self.sumfieldnames = _sumfieldnames;
+        self.conditions = [[NSMutableArray alloc]init];
+        self.base = [CommonUtil getLocalServerBase];
+    }
 	return self;
 }
 
 
--(NSString *)download:(NSString *)moduleid visibleCol:(NSString *)visibleCol theDelegate:(UIViewController *)downdelegate
-{
-	NSString *url = [[NSString alloc]initWithFormat:@"%@%@?", self.base , ACTION_DOWNLOAD];
-	url = [url stringByAppendingFormat:@"gridcode=%@&",self.gridcode];
-	url = [url stringByAppendingFormat:@"queryType=%@&",self.queryType];
-	url = [url stringByAppendingFormat:@"dataSource=%@&",self.dataSource];
-	url = [url stringByAppendingFormat:@"orderfields=%@&",self.orderfields];
-	url = [url stringByAppendingFormat:@"downloadmoduleid=%@&",moduleid];
-	url = [url stringByAppendingFormat:@"querymoduleid=%@&",self.querymoduleid];
-	url = [url stringByAppendingFormat:@"visibleFields=%@&",visibleCol];
-	url = [url stringByAppendingFormat:@"pageRowNum=%d&",10000];
-	
-	NSMutableArray *d = [self defaultCondition];
-	[self.conditions addObjectsFromArray:d];
-	NSMutableArray *allc = [[NSMutableArray alloc]initWithArray:self.conditions];
-	NSUInteger length = [allc count];
-	
-	url = [url stringByAppendingFormat:@"oper_length=%d&",length];
-	
-	NSUInteger i;
-	for(i=0;i<length;i++)
-	{
-		if([allc objectAtIndex:i]==nil)
-			continue;
-		NSDictionary *nd = [allc objectAtIndex:i];
-		
-		url = [url stringByAppendingFormat:@"fieldName_%d=%@&",i,
-			   [[nd objectForKey:@"fieldName"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
-		url = [url stringByAppendingFormat:@"opera_%d=%@&",i,
-			   [[nd objectForKey:@"opera"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
-		url = [url stringByAppendingFormat:@"value1_%d=%@&",i,
-			   [[nd objectForKey:@"value1"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
-		if([nd objectForKey:@"value2"]!= nil){
-		url = [url stringByAppendingFormat:@"value2_%d=%@&",i,
-			   [[nd objectForKey:@"value2"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
-		}
-
-		
-		
-	}
-	
-	
-	NSURL *httpUrl = [NSURL URLWithString:url];
-	
-	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	//[dateFormatter setDateFormat:@"hh:mm:ss"]
-	[dateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
-	NSLog(@"Date%@", [dateFormatter stringFromDate:[NSDate date]]);
-	
-	NSString *filepath  = [[[NSBundle mainBundle] bundlePath] stringByAppendingString:
-			  [[NSString alloc]initWithFormat:@"%@.xls",
-			   [dateFormatter stringFromDate:[NSDate date]]]
-			  ];
-	
-//	IMpcAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-	
-	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:httpUrl];
-	[request setDownloadDestinationPath:filepath];
-	[request setDelegate:self];
-	[request setUseCookiePersistence:NO];
-//	[request setRequestCookies:[NSMutableArray arrayWithObject:delegate.iMpcCookie]];
-	[request setDidFinishSelector:@selector(downloadFinished:)];
-	if (progress == nil) {
-		progress = [[UIProgressView alloc]initWithFrame:CGRectMake(60, 120, 200, 10)];
-	}
-	
-	[downdelegate.view addSubview:progress];
-	[request setDownloadProgressDelegate:progress];
-	[request startAsynchronous];
-
-	return nil;
-	
-}
+//-(NSString *)download:(NSString *)moduleid visibleCol:(NSString *)visibleCol theDelegate:(UIViewController *)downdelegate
+//{
+//	NSString *url = [[NSString alloc]initWithFormat:@"%@%@?", self.base , ACTION_DOWNLOAD];
+//	url = [url stringByAppendingFormat:@"gridcode=%@&",self.gridcode];
+//	url = [url stringByAppendingFormat:@"queryType=%@&",self.queryType];
+//	url = [url stringByAppendingFormat:@"dataSource=%@&",self.dataSource];
+//	url = [url stringByAppendingFormat:@"orderfields=%@&",self.orderfields];
+//	url = [url stringByAppendingFormat:@"downloadmoduleid=%@&",moduleid];
+//	url = [url stringByAppendingFormat:@"querymoduleid=%@&",self.querymoduleid];
+//	url = [url stringByAppendingFormat:@"visibleFields=%@&",visibleCol];
+//	url = [url stringByAppendingFormat:@"pageRowNum=%d&",10000];
+//	
+//	NSMutableArray *d = [self defaultCondition];
+//	[self.conditions addObjectsFromArray:d];
+//	NSMutableArray *allc = [[NSMutableArray alloc]initWithArray:self.conditions];
+//	NSUInteger length = [allc count];
+//	
+//	url = [url stringByAppendingFormat:@"oper_length=%d&",length];
+//	
+//	NSUInteger i;
+//	for(i=0;i<length;i++)
+//	{
+//		if([allc objectAtIndex:i]==nil)
+//			continue;
+//		NSDictionary *nd = [allc objectAtIndex:i];
+//		
+//		url = [url stringByAppendingFormat:@"fieldName_%d=%@&",i,
+//			   [[nd objectForKey:@"fieldName"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
+//		url = [url stringByAppendingFormat:@"opera_%d=%@&",i,
+//			   [[nd objectForKey:@"opera"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
+//		url = [url stringByAppendingFormat:@"value1_%d=%@&",i,
+//			   [[nd objectForKey:@"value1"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
+//		if([nd objectForKey:@"value2"]!= nil){
+//		url = [url stringByAppendingFormat:@"value2_%d=%@&",i,
+//			   [[nd objectForKey:@"value2"]stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding ]];
+//		}
+//
+//		
+//		
+//	}
+//	
+//	
+//	NSURL *httpUrl = [NSURL URLWithString:url];
+//	
+//	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//	[dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+//	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+//	//[dateFormatter setDateFormat:@"hh:mm:ss"]
+//	[dateFormatter setDateFormat:@"yyyyMMddHHmmssSSS"];
+//	NSLog(@"Date%@", [dateFormatter stringFromDate:[NSDate date]]);
+//	
+//	NSString *filepath  = [[[NSBundle mainBundle] bundlePath] stringByAppendingString:
+//			  [[NSString alloc]initWithFormat:@"%@.xls",
+//			   [dateFormatter stringFromDate:[NSDate date]]]
+//			  ];
+//	
+////	IMpcAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+//	
+//	ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:httpUrl];
+//	[request setDownloadDestinationPath:filepath];
+//	[request setDelegate:self];
+//	[request setUseCookiePersistence:NO];
+////	[request setRequestCookies:[NSMutableArray arrayWithObject:delegate.iMpcCookie]];
+//	[request setDidFinishSelector:@selector(downloadFinished:)];
+//	if (progress == nil) {
+//		progress = [[UIProgressView alloc]initWithFrame:CGRectMake(60, 120, 200, 10)];
+//	}
+//	
+//	[downdelegate.view addSubview:progress];
+//	[request setDownloadProgressDelegate:progress];
+//	[request startAsynchronous];
+//
+//	return nil;
+//	
+//}
 
 /*
  
@@ -189,12 +240,29 @@
  */
 
 //getdata
+
+-(void)doQueryWithConditions:(NSArray*)_conditions byRetAll:(BOOL) all
+{
+    [self.conditions removeAllObjects];
+    if (_conditions != nil) {
+        [self.conditions addObjectsFromArray:_conditions];
+    }
+    if (all) {
+        [self requestDataWithPage:1 pageNum:DataSetRequestPageNumUnlimited needpagecount:self.pagecount];
+    }
+    else {
+        [self requestDataWithPage:1 pageNum:[self.pagerownum integerValue]needpagecount:self.pagecount];
+    }
+}
+
 -(void)requestDataWithPage:(int)page pageNum:(unsigned)pageNum needpagecount:(BOOL)needpagecount
 {
-	//List<NameValuePair> params = new ArrayList<NameValuePair>();  
-
-	
-	NSString *httpUrl = [[NSString alloc]initWithFormat:@"%@%@%@", self.base , SERVLET_URL , ACTION_QUERY];
+	NSHTTPCookie* session = [CommonUtil getSession];
+    if (session == nil) {
+        return;
+    }
+    
+	NSString *httpUrl = [[NSString alloc]initWithFormat:@"%@%@%@", self.base , DataSetRequestServletUrl , DataSetRequestActionQuery];
 	NSURL *url = [NSURL URLWithString:httpUrl];
 	ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
 	
@@ -240,12 +308,11 @@
 	[request setTimeOutSeconds:120];
 
 	[request setUseCookiePersistence:NO];
-	[request setRequestCookies:[NSMutableArray arrayWithObject:[CommonUtil getSession]]];
+	[request setRequestCookies:[NSMutableArray arrayWithObject:session]];
 	
 	[request setDelegate:self];
 	[request setUserInfo:nil];
 	[request startAsynchronous];
-	
 }
 
 
@@ -257,17 +324,23 @@
 	NSDictionary *result = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
     
     if (error) {
-        if (delegate && [delegate respondsToSelector:@selector(dataReadDidFail:)]) {
-            [delegate performSelector:@selector(dataReadDidFail:) withObject:error];
+        if (delegate && [delegate respondsToSelector:@selector(dataSetRequest:dataReadDidFail:)]) {
+            [delegate performSelector:@selector(dataSetRequest:dataReadDidFail:) withObject:self  withObject:error];
         }
     }
     else {
-        if (delegate && [delegate respondsToSelector:@selector(didQueryData:)]) {
-            [delegate performSelector:@selector(didQueryData:) withObject:result];
+        if (delegate && [delegate respondsToSelector:@selector(dataSetRequest:didQueryData:)]) {
+            [delegate performSelector:@selector(dataSetRequest:didQueryData:) withObject:self  withObject:result];
         }
-        NSArray *rows = [result objectForKey:@"rows"];
-        if (delegate && [delegate respondsToSelector:@selector(dataDidRead:)]) {
-            [delegate performSelector:@selector(dataDidRead:) withObject:rows];
+        NSString *error = [result objectForKey:@"error"];
+        if (error) {
+            [CommonUtil alert:@"服务器错误" msg:error];
+        }
+        else {
+            NSArray *rows = [result objectForKey:@"rows"];
+            if (delegate && [delegate respondsToSelector:@selector(dataSetRequest:dataDidRead:)]) {
+                [delegate performSelector:@selector(dataSetRequest:dataDidRead:) withObject:self  withObject:rows];
+            }
         }
     }
     
@@ -278,8 +351,8 @@
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
 	NSError *error = [request error];
-    if (delegate && [delegate respondsToSelector:@selector(requestDataFailed:)]) {
-        [delegate performSelector:@selector(requestDataFailed:) withObject:error];
+    if (delegate && [delegate respondsToSelector:@selector(dataSetRequest:requestDataFailed:)]) {
+        [delegate performSelector:@selector(dataSetRequest:requestDataFailed:) withObject:self  withObject:error];
     }
 }
 

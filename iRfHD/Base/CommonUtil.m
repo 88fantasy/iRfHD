@@ -8,6 +8,8 @@
 
 #import "CommonUtil.h"
 #import "ASIFormDataRequest.h"
+#import "iRfAppDelegate.h"
+#import "GRAlertView.h"
 
 @implementation CommonUtil
 
@@ -18,8 +20,30 @@ static NSHTTPCookie *_session;
 + (void) alert:(NSString*)title msg:(NSString*)msg
 {
     // open an alert with just an OK button
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:msg
+//    iRfAppDelegate *appdelegate = (iRfAppDelegate*) [[UIApplication sharedApplication] delegate];
+//    
+//    UIPopoverController
+//    appdelegate.navigationController.
+    
+    GRAlertView *alert = [[GRAlertView alloc] initWithTitle:title message:msg
                                                    delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    alert.animation = alert.animation = GRAlertAnimationLines;
+    if ([title isEqualToString:NSLocalizedString(@"Info", @"Info")]) {
+        alert.style = GRAlertStyleInfo;
+        [alert setImage:@"info.png"];
+    }
+    else if ([title isEqualToString:NSLocalizedString(@"Error", @"Error")]) {
+        alert.style = GRAlertStyleAlert;
+        alert.animation = GRAlertAnimationBorder;
+        [alert setImage:@"alert.png"];
+    }
+    else if ([title isEqualToString:NSLocalizedString(@"Success", @"Success")]) {
+        alert.style = GRAlertStyleSuccess;
+        [alert setImage:@"accept.png"];
+    }
+    else if ([title isEqualToString:NSLocalizedString(@"Warning", @"Warning")]) {
+        alert.style = GRAlertStyleWarning;
+    }
     [alert show];
 }
 
@@ -107,7 +131,8 @@ static NSHTTPCookie *_session;
         [request setPostValue:username forKey:@"username"];
         [request setPostValue:password forKey:@"password"];
         [request startSynchronous];
-        if (![request error]) {
+        NSError *error = [request error];
+        if (!error) {
             
             NSDictionary *headers = [request responseHeaders];
             NSString *setcookie = [headers objectForKey:@"Set-Cookie"];
@@ -146,9 +171,26 @@ static NSHTTPCookie *_session;
                 [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:[nsd objectForKey:@"error"]];
             }
         }
-        
+        else {
+            [CommonUtil alert:@"服务器端错误" msg:[error localizedDescription]];
+        }
     }
     return _session;
+}
+
+
++ (NSString *) stringFromDate:(NSDate *)date
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    return [formatter stringFromDate:date];
+}
+
++ (NSString *) stringFromDateTime:(NSDate *)date
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    return [formatter stringFromDate:date];
 }
 
 @end

@@ -18,6 +18,7 @@
 #import "QRCodeRgReader.h"
 //#import "LoanTableView.h"
 #import "MBProgressHUD.h"
+#import "RedressView.h"
 
 static NSString * const kCellIdentifier = @"RootViewControllerIdentifier";
 static NSString * const kTitleKey = @"title";
@@ -136,10 +137,10 @@ enum {
     
     ScanView* scanview = [[ScanView alloc] initWithNibName:@"ScanView" bundle:nil];
     [self.menuList addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                              @"收货管理", kTitleKey,
+                              @"条码收货", kTitleKey,
                               @"扫描或手输条码进行收货", kExplainKey,
                               scanview, kViewControllerKey,
-                              @"shgl.png",iconKey,
+                              @"barcode.png",iconKey,
 							  nil]];
     
     RgListView *rglistView = [[RgListView alloc] initWithStyle:UITableViewStylePlain];
@@ -202,8 +203,17 @@ enum {
                                   @"二维码收货", kTitleKey,
                                   @"通过扫描二维码识别收货数据", kExplainKey,
                                   qrCodeRgReader, kViewControllerKey,
+                                  @"qrcode.png",iconKey,
+                                  nil]];
+        
+        RedressView *redressView = [[RedressView alloc]initWithNibName:@"RedressView" bundle:nil];
+        [self.menuList addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                  @"药房换药", kTitleKey,
+                                  @"借货或勾对处方还药", kExplainKey,
+                                  redressView, kViewControllerKey,
                                   @"kccx.png",iconKey,
                                   nil]];
+        
     }
     
 //    LoanTableView *loanTableView = [[LoanTableView alloc]initWithStyle:UITableViewStylePlain];

@@ -14,8 +14,6 @@
 @synthesize name, value, null, xml;
 
 -(void)setValue:(id)valueParam{
-	[valueParam retain];
-	[value release];
 	value = valueParam;
 	null = (value == nil);
 }
@@ -34,13 +32,6 @@
 	} else {
 		return [Soap serialize: self.value withName: name];
 	}
-}
-
--(void)dealloc{
-	[name release];
-	[value release];
-	[xml release];
-	[super dealloc];
 }
 
 @end

@@ -89,18 +89,45 @@
 
 //- (void) viewDidAppear:(BOOL)animated
 //{
-//
+//    if (IsLandscape) {
+//        UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+//        CGRect frame = [UIScreen mainScreen].applicationFrame;
+//        CGFloat t = frame.size.height ;
+//        frame.size.height = frame.size.width;
+//        frame.size.width = t;
+//        CGPoint center = CGPointMake(frame.origin.x + ceil(frame.size.width/2), frame.origin.y + ceil(frame.size.height/2));
+//        CGAffineTransform transform = CGAffineTransformIdentity;
+//        if (orientation == UIInterfaceOrientationLandscapeRight) {
+//            transform = CGAffineTransformMakeRotation(M_PI*1.5);
+//        } else if (orientation == UIInterfaceOrientationLandscapeLeft) {
+//            transform = CGAffineTransformMakeRotation(M_PI/2);
+//        }
+//        
+//        
+//        
+//        CGFloat duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;//（获取当前电池条动画改变的时间）
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationDuration:duration];
+//        
+//        [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait animated:YES];
+//        self.navigationController.navigationBar.transform = transform;
+//        self.view.transform = transform;
+//        self.view.frame = frame;
+//        
+//        //在这里设置view.transform需要匹配的旋转角度的大小就可以了。
+//        
+//        [UIView commitAnimations];
+//    }
+//    
+//    
 //}
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	// the user pressed the "Done" button, so dismiss the keyboard
 	[textField resignFirstResponder];
+    [self searchButtonTapped];
 	return YES;
-}
-
-- (IBAction) cancelKeyboard:(id)sender{
-    [sender resignFirstResponder];
 }
 
 #pragma mark scan and handles

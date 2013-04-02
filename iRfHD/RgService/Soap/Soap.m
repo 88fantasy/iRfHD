@@ -169,7 +169,7 @@
 		if(outCount > 0) {
 			for(i = 0; i < outCount; i++) {
 				NSString *name = [NSString stringWithCString: property_getName(properties[i]) encoding: NSUTF8StringEncoding];
-				[s appendFormat: @"<%@>%@</%@>", name, [Soap serialize: (id)properties[i]], name];
+				[s appendFormat: @"<%@>%@</%@>", name, [Soap serialize: (__bridge id)properties[i]], name];
 				[keys setValue: name forKey: name];
 			}
 		}
@@ -191,7 +191,7 @@
 		[request setHTTPBody: [data dataUsingEncoding: NSUTF8StringEncoding]];
 		[request addValue: @"text/xml" forHTTPHeaderField: @"Content-Type"];
 	}
-
+	
 	NSError* error;
 	NSURLResponse* response;
 
@@ -201,7 +201,10 @@
 // Gets the node from another node by name.
 + (CXMLNode*) getNode: (CXMLNode*) element withName: (NSString*) name {
 	for(CXMLNode* child in [element children]) {
-		if([child respondsToSelector:@selector(name)] && [[child name] isEqual: name]) {
+		if([child respondsToSelector:@selector(localName)] && [[child localName] isEqual: name]) {
+			return (CXMLNode*)child;
+		}
+		if([child respondsToSelector:@selector(name)] && ([[child name] isEqual: name] || [[child name] hasSuffix: [NSString stringWithFormat:@":%@", name]])) {
 			return (CXMLNode*)child;
 		}
 	}
@@ -302,12 +305,12 @@
 		if([type isEqualToString:@"date"] || [type isEqualToString:@"time"] || [type isEqualToString:@"datetime"]) {
 			return [Soap dateFromString:value];
 		}
-		
+
 		// Return as a duration
 		if([type isEqualToString:@"duration"]) {
 			return [NSNumber numberWithDouble:[Soap durationFromString:value]];
 		}
-		
+
 		// Return as data
 		if([type isEqualToString:@"base64binary"]) {
 			return [Soap dataFromString:value];
@@ -457,7 +460,6 @@
 		formatter = [[NSDateFormatter alloc] init];
 		NSLocale* enUS = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
 		[formatter setLocale: enUS];
-		[enUS release];
 		[formatter setLenient: YES];
 		[formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS"];
 	}
@@ -466,6 +468,10 @@
 
 // Converts a string to a date.
 + (NSDate*) dateFromString: (NSString*) value {
+	NSRange range = [value rangeOfString:@"+"];
+	if(range.length > 0) {
+		value = [value substringToIndex:range.location];
+	}
 	if([value rangeOfString:@"T"].length != 1) {
 		value = [NSString stringWithFormat:@"%@T00:00:00.000", value];
 	}
@@ -479,6 +485,10 @@
 
 + (NSString*) getDateString: (NSDate*) value {
 	return [[Soap dateFormatter] stringFromDate:value];
+}
+
++(NSData*) dataFromString:(NSString*) value{
+	return [[NSData alloc] initWithBase64EncodedString:value];
 }
 
 +(NSTimeInterval) durationFromString:(NSString*)value {
@@ -587,10 +597,6 @@
 	return o;
 }
 
-+(NSData*) dataFromString:(NSString*) value{
-	return [[[NSData alloc]initWithBase64EncodedString:value] autorelease];
-}
-
 +(NSString*)getBase64String:(NSData*)value{
 	return	[value base64Encoding];
 }
@@ -613,7 +619,7 @@
 
 // Creates dictionary of string values from the XML document.
 +(id)objectFromXMLString:(NSString*)xmlString {
-	CXMLDocument* doc = [[[CXMLDocument alloc] initWithXMLString:xmlString options:0 error:nil] autorelease];
+	CXMLDocument* doc = [[CXMLDocument alloc] initWithXMLString:xmlString options:0 error:nil];
 	return [Soap objectFromNode:doc];
 }
 

@@ -16,58 +16,72 @@
 	// service.password = @"password";
 	
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service doReqComfirm:self action:@selector(doReqComfirmHandler:) username: @"" password: @"" jsonArray: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service doRg:self action:@selector(doRgHandler:) username: @"" password: @"" splid: @"" rgqty: @"" locno: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
+	[service doRgBy2DBarcode:self action:@selector(doRgBy2DBarcodeHandler:) username: @"" password: @"" json: @""];
+
+	// Returns NSString*
+	/*  */
 	[service doTr:self action:@selector(doTrHandler:) username: @"" password: @"" pkvalue: @"" jsonConfig: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getAllRg:self action:@selector(getAllRgHandler:) username: @"" password: @"" queryjson: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getAllRgGroupJSON:self action:@selector(getAllRgGroupJSONHandler:) username: @"" password: @"" queryjson: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getAllRgGroupXML:self action:@selector(getAllRgGroupXMLHandler:) username: @"" password: @"" queryxml: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getReqInfo:self action:@selector(getReqInfoHandler:) username: @"" password: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getRg:self action:@selector(getRgHandler:) username: @"" password: @"" labelno: @""];
 
-	// Returns iRfRet*. 
-	[service getRgs:self action:@selector(getRgsHandler:) queryxml: @"" code: @""];
-
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getStockByLoc:self action:@selector(getStockByLocHandler:) username: @"" password: @"" locno: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service getTrGds:self action:@selector(getTrGdsHandler:) username: @"" password: @"" page: 0];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service mvConfirm:self action:@selector(mvConfirmHandler:) username: @"" password: @"" jsonObject: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service queryJSON:self action:@selector(queryJSONHandler:) sql: @"" dbname: @""];
 
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service queryXML:self action:@selector(queryXMLHandler:) sql: @"" dbname: @""];
 
-	// Returns iRfRet*. 
+	// Returns iRfRet*
+	/*  */
 	[service setEdisRg:self action:@selector(setEdisRgHandler:) xml: @""];
 
-	// Returns id. 
+	// Returns id
+	/*  */
 	[service setIRfSetting:self action:@selector(setIRfSettingHandler:) username: @"" password: @"" jsonObject: @""];
 
-	// Returns iRfRet*. 
-	[service setRgSuccess:self action:@selector(setRgSuccessHandler:) ids: [NSMutableArray array] code: @""];
-
-	// Returns NSString*. 
+	// Returns NSString*
+	/*  */
 	[service test:self action:@selector(testHandler:) username: @"" password: @""];
 }
 
@@ -117,6 +131,30 @@
 	// Do something with the NSString* result
 		NSString* result = (NSString*)value;
 	NSLog(@"doRg returned the value: %@", result);
+			
+}
+	
+
+// Handle the response from doRgBy2DBarcode.
+		
+- (void) doRgBy2DBarcodeHandler: (id) value {
+
+	// Handle errors
+	if([value isKindOfClass:[NSError class]]) {
+		NSLog(@"%@", value);
+		return;
+	}
+
+	// Handle faults
+	if([value isKindOfClass:[SoapFault class]]) {
+		NSLog(@"%@", value);
+		return;
+	}				
+			
+
+	// Do something with the NSString* result
+		NSString* result = (NSString*)value;
+	NSLog(@"doRgBy2DBarcode returned the value: %@", result);
 			
 }
 	
@@ -261,30 +299,6 @@
 	// Do something with the NSString* result
 		NSString* result = (NSString*)value;
 	NSLog(@"getRg returned the value: %@", result);
-			
-}
-	
-
-// Handle the response from getRgs.
-		
-- (void) getRgsHandler: (id) value {
-
-	// Handle errors
-	if([value isKindOfClass:[NSError class]]) {
-		NSLog(@"%@", value);
-		return;
-	}
-
-	// Handle faults
-	if([value isKindOfClass:[SoapFault class]]) {
-		NSLog(@"%@", value);
-		return;
-	}				
-			
-
-	// Do something with the iRfRet* result
-		iRfRet* result = (iRfRet*)value;
-	NSLog(@"getRgs returned the value: %@", result);
 			
 }
 	
@@ -453,30 +467,6 @@
 	// Do something with the id result
 		id result = (id)value;
 	NSLog(@"setIRfSetting returned the value: %@", result);
-			
-}
-	
-
-// Handle the response from setRgSuccess.
-		
-- (void) setRgSuccessHandler: (id) value {
-
-	// Handle errors
-	if([value isKindOfClass:[NSError class]]) {
-		NSLog(@"%@", value);
-		return;
-	}
-
-	// Handle faults
-	if([value isKindOfClass:[SoapFault class]]) {
-		NSLog(@"%@", value);
-		return;
-	}				
-			
-
-	// Do something with the iRfRet* result
-		iRfRet* result = (iRfRet*)value;
-	NSLog(@"setRgSuccess returned the value: %@", result);
 			
 }
 	

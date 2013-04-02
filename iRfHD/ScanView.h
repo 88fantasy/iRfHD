@@ -27,7 +27,6 @@
 
 - (IBAction) scanButtonTapped;
 - (IBAction) searchButtonTapped;
-- (IBAction) cancelKeyboard:(id)sender;
 
 
 @end

@@ -35,7 +35,6 @@
 - (BOOL)writeToURL:(NSURL *)url atomically:(BOOL)atomically; // the atomically flag is ignored if url of a type that cannot be written atomically.
 
 - (NSArray *)keysSortedByValueUsingSelector:(SEL)comparator;
-- (void)getObjects:(id *)objects andKeys:(id *)keys;
 
 + (id)dictionary;
 + (id)dictionaryWithObject:(id)object forKey:(id)key;
@@ -66,12 +65,12 @@
 + (id)dictionaryWithCapacity:(NSUInteger)numItems;
 - (id)initWithCapacity:(NSUInteger)numItems;
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len;
-
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 
 - (id)copyWithZone:(NSZone *)zone;
 - (id)mutableCopyWithZone:(NSZone *)zone;
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len;
 
 @end

@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "ZBarSDK.h"
+#import "ScanOverlayView.h"
 #import "Const.h"
 #import "sqlite3.h"
 #import "FMDatabase.h"

@@ -21,7 +21,7 @@
 }
 
 +(SoapLiteral*)literalWithString:(NSString *)string {
-	return [[[SoapLiteral alloc] initWithString:string] autorelease];
+	return [[SoapLiteral alloc] initWithString:string];
 }
 
 @end

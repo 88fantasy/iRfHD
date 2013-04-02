@@ -15,9 +15,9 @@
 
 + (SoapFault*) faultWithData: (NSMutableData*) data {
 	NSError* error;
-	CXMLDocument* doc = [[[CXMLDocument alloc] initWithData: data options: 0 error: &error] autorelease];
+	CXMLDocument* doc = [[CXMLDocument alloc] initWithData: data options: 0 error: &error];
 	if(doc == nil) {
-		return [[[SoapFault alloc] init] autorelease];
+		return [[SoapFault alloc] init];
 	}
 	return [SoapFault faultWithXMLDocument: doc];
 }
@@ -27,7 +27,7 @@
 }
 
 + (SoapFault*) faultWithXMLElement: (CXMLNode*) element {
-	SoapFault* fault = [[[SoapFault alloc] init] autorelease];
+	SoapFault* fault = [[SoapFault alloc] init];
 	fault.hasFault = NO;
 	if(element == nil) {
 		return fault;
@@ -47,14 +47,6 @@
 	} else {
 		return nil;
 	}
-}
-
-- (void) dealloc {
-	self.faultCode = nil;
-	self.faultString = nil;
-	self.faultActor = nil;
-	self.detail = nil;
-	[super dealloc];
 }
 
 @end

@@ -9,15 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ASIFormDataRequest.h"
 
-@protocol DataSetRequestDelegate <NSObject>
-
-@optional
--(void)didQueryData:(NSDictionary *)result;
--(void)requestDataFailed:(NSError *)error;
--(void)dataDidRead:(NSArray *)rows;
--(void)dataReadDidFail:(NSError *)error;
-
-@end
+@protocol DataSetRequestDelegate;
 
 @interface DataSetRequest : NSObject
 <ASIHTTPRequestDelegate>
@@ -28,8 +20,6 @@
 	NSString *dataSource ;
 	NSString *querymoduleid ;
 	NSString *sumfieldnames ;
-	NSString *stagetype ;
-	NSString *stageid ;     
 	NSString *orderfields;
 	NSMutableArray *conditions ;
 	NSString * pagerownum;
@@ -45,6 +35,10 @@
 	UIProgressView * progress;
     
     __weak id<DataSetRequestDelegate> delegate;
+    
+    BOOL pagecount;
+    
+    NSDictionary *userInfo;
 }
 
 @property (nonatomic,strong) NSString *gridcode ;
@@ -59,22 +53,24 @@
 
 @property (strong) NSString *sessionId;
 @property (strong) NSString *base;
-@property (strong) NSString * SERVLET_URL;
-@property (strong) NSString * ACTION_INIT;
-@property (strong) NSString * ACTION_QUERY;
-@property (strong) NSString * ACTION_DOWNLOAD;
 
 @property (nonatomic,weak) id<DataSetRequestDelegate> delegate;
 
+@property (nonatomic,strong) NSDictionary *userInfo;
+@property (assign) BOOL pagecount;
 
 //初始化
--(id)initWithGridcode:(NSString *)gridcode querytype:(NSString *)queryType
-			  datasource:(NSString *)dataSource querymoduleid:(NSString *)querymoduleid sumfieldnames:(NSString *)sumfieldnames;
+//-(id)initWithGridcode:(NSString *)_gridcode;
+
+-(id)initWithGridcode:(NSString *)_gridcode querytype:(NSString *)_queryType
+			  datasource:(NSString *)_dataSource querymoduleid:(NSString *)_querymoduleid sumfieldnames:(NSString *)_sumfieldnames;
 
 //download
--(NSString *)download:(NSString *)moduleid visibleCol:(NSString *)visibleCol theDelegate:(UIViewController *)downdelegate;
+//-(NSString *)download:(NSString *)moduleid visibleCol:(NSString *)visibleCol theDelegate:(UIViewController *)downdelegate;
 
 //getdata
+-(void)doQueryWithConditions:(NSArray*)conditions byRetAll:(BOOL) all;
+
 -(void)requestDataWithPage:(int)page pageNum:(unsigned int)pageNum needpagecount:(BOOL)needpagecount;
 
 - (void)requestFinished:(ASIHTTPRequest *)request;
@@ -94,3 +90,17 @@
 @end
 
 
+@protocol DataSetRequestDelegate <NSObject>
+
+@optional
+-(void)dataSetRequest:(DataSetRequest *)dataSetRequest didQueryData:(NSDictionary *)result;
+-(void)dataSetRequest:(DataSetRequest *)dataSetRequest requestDataFailed:(NSError *)error;
+-(void)dataSetRequest:(DataSetRequest *)dataSetRequest dataDidRead:(NSArray *)rows;
+-(void)dataSetRequest:(DataSetRequest *)dataSetRequest dataReadDidFail:(NSError *)error;
+
+@end
+
+
+typedef NS_OPTIONS(NSInteger, DataSetRequestPageNum) {
+    DataSetRequestPageNumUnlimited = - 10
+};

@@ -38,14 +38,4 @@
 	return self;
 }
 
--(void)dealloc {
-	[_serviceUrl release];
-	[_namespace release];
-	[_username release];
-	[_password release];
-	[_headers release];
-	[_defaultHandler release];
-	[super dealloc];
-}
-
 @end

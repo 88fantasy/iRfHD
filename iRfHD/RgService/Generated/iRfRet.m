@@ -22,7 +22,7 @@
 	+ (iRfRet*) createWithNode: (CXMLNode*) node
 	{
 		if(node == nil) { return nil; }
-		return [[[self alloc] initWithNode: node] autorelease];
+		return [[self alloc] initWithNode: node];
 	}
 
 	- (id) initWithNode: (CXMLNode*) node {
@@ -76,12 +76,6 @@
 	-(NSUInteger)hash{
 		return [Soap generateHash:self];
 
-	}
-	
-	- (void) dealloc
-	{
-		self.msg = nil;
-		[super dealloc];
 	}
 
 @end

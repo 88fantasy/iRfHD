@@ -12,7 +12,7 @@
 
 + (id) newWithNode: (CXMLNode*) node
 {
-	return [[[SoapDictionary alloc] initWithNode:node] autorelease];
+	return [[self alloc] initWithNode:node];
 }
 
 - (id) initWithNode: (CXMLNode*) node
@@ -96,20 +96,16 @@
 	return [self.items keysSortedByValueUsingSelector:comparator];
 }
 
-- (void)getObjects:(id *)objects andKeys:(id *)keys {
-	return [self.items getObjects:objects andKeys:keys];
-}
-
 + (id)dictionary {
-	return [[[SoapDictionary alloc] init] autorelease];
+	return [[SoapDictionary alloc] init];
 }
 
 + (id)dictionaryWithObject:(id)object forKey:(id)key {
-	return [[[SoapDictionary alloc] initWithObjectsAndKeys:object, key, nil] autorelease];
+	return [[SoapDictionary alloc] initWithObjectsAndKeys:object, key, nil];
 }
 
 + (id)dictionaryWithObjects:(id *)objects forKeys:(id *)keys count:(NSUInteger)cnt {
-	return [[[SoapDictionary alloc] initWithObjects:objects forKeys:keys count:cnt] autorelease];
+	return [[SoapDictionary alloc] initWithObjects:objects forKeys:keys count:cnt];
 }
 
 + (id)dictionaryWithObjectsAndKeys:(id)firstObject, ...{
@@ -140,15 +136,15 @@
 }
 
 + (id)dictionaryWithDictionary:(NSDictionary *)dict {
-	return [[[SoapDictionary alloc] initWithDictionary:dict] autorelease];
+	return [[SoapDictionary alloc] initWithDictionary:dict];
 }
 
 + (id)dictionaryWithObjects:(NSArray *)objects forKeys:(NSArray *)keys {
-	return [[[SoapDictionary alloc] initWithObjects:objects forKeys:keys] autorelease];
+	return [[SoapDictionary alloc] initWithObjects:objects forKeys:keys];
 }
 
 - (id)initWithObjects:(id *)objects forKeys:(id *)keys count:(NSUInteger)cnt {
-	return [[[SoapDictionary alloc] initWithObjects:objects forKeys:keys count:cnt] autorelease];
+	return [[SoapDictionary alloc] initWithObjects:objects forKeys:keys count:cnt];
 }
 
 - (id)initWithObjectsAndKeys:(id)firstObject, ... {
@@ -181,43 +177,43 @@
 
 - (id)initWithDictionary:(NSDictionary *)otherDictionary {
 	if (self = [self init]) {
-		self.items = [[[NSMutableDictionary alloc] initWithDictionary:otherDictionary] autorelease];
+		self.items = [[NSMutableDictionary alloc] initWithDictionary:otherDictionary];
 	}
 	return self;
 }
 
 - (id)initWithDictionary:(NSDictionary *)otherDictionary copyItems:(BOOL)flag {
 	if (self = [self init]) {
-		self.items = [[[NSMutableDictionary alloc] initWithDictionary:otherDictionary] autorelease];
+		self.items = [[NSMutableDictionary alloc] initWithDictionary:otherDictionary];
 	}
 	return self;
 }
 
 - (id)initWithObjects:(NSArray *)objects forKeys:(NSArray *)keys {
 	if (self = [self init]) {
-		self.items = [[[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys] autorelease];
+		self.items = [[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys];
 	}
 	return self;
 }
 
 + (id)dictionaryWithContentsOfFile:(NSString *)path {
-	return [[[SoapDictionary alloc] initWithContentsOfFile:path] autorelease];
+	return [[SoapDictionary alloc] initWithContentsOfFile:path];
 }
 
 + (id)dictionaryWithContentsOfURL:(NSURL *)url {
-	return [[[SoapDictionary alloc] initWithContentsOfURL:url] autorelease];
+	return [[SoapDictionary alloc] initWithContentsOfURL:url];
 }
 
 - (id)initWithContentsOfFile:(NSString *)path {
 	if (self = [self init]) {
-		self.items = [[[NSMutableDictionary alloc] initWithContentsOfFile:path] autorelease];
+		self.items = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
 	}
 	return self;
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url {
 	if (self = [self init]) {
-		self.items = [[[NSMutableDictionary alloc] initWithContentsOfURL:url] autorelease];
+		self.items = [[NSMutableDictionary alloc] initWithContentsOfURL:url];
 	}
 	return self;
 }
@@ -247,7 +243,7 @@
 }
 
 + (id)dictionaryWithCapacity:(NSUInteger)numItems {
-	return [[[SoapDictionary alloc] initWithCapacity:numItems] autorelease];
+	return [[SoapDictionary alloc] initWithCapacity:numItems];
 }
 
 - (id)initWithCapacity:(NSUInteger)numItems {
@@ -257,16 +253,16 @@
 	return self;
 }
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len {
-	return [self.items countByEnumeratingWithState:state objects:stackbuf count:len];
-}
-
 - (void)encodeWithCoder:(NSCoder *)aCoder {
 	[self.items encodeWithCoder:aCoder];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-	return (SoapDictionary*)[self.items initWithCoder:aDecoder];
+	self = [self init];
+	if(self) {
+		self.items = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
+	}
+	return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -275,6 +271,10 @@
 
 - (id)mutableCopyWithZone:(NSZone *)zone {
 	return [self.items mutableCopyWithZone:zone];
+}
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len {
+	return [self.items countByEnumeratingWithState:state objects:buffer count:len];
 }
 
 

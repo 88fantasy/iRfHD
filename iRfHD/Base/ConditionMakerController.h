@@ -41,7 +41,7 @@ typedef NS_OPTIONS(NSUInteger, ConditionMakerMode) {
 
 @property (nonatomic,strong) NSArray *fieldDictionaryList;
 @property (nonatomic,weak) id<ConditionMakerControllerDelegate> delegate;
-@property (nonatomic) NSInteger controllermode;
+@property (assign) NSInteger controllermode;
 
 + (id)controllerWithMode:(ConditionMakerMode)mode style:(UITableViewStyle)style fields:(NSArray*)fieldlist;
 
@@ -52,6 +52,6 @@ typedef NS_OPTIONS(NSUInteger, ConditionMakerMode) {
 @protocol ConditionMakerControllerDelegate <NSObject>
 
 @optional
--(void)conditionDidMaked:(NSDictionary*)makedconditions;
+-(void)conditionMakerController:(ConditionMakerController*)conditionMakerController didMaked:(NSDictionary*)makedconditions;
 
 @end

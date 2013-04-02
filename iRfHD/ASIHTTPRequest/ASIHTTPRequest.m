@@ -668,11 +668,11 @@ static NSOperationQueue *sharedQueue = nil;
 	[[self cancelledLock] unlock];
 	return d;
 }
-
+#pragma mark delegate retain
 - (void)setDelegate:(id)newDelegate
 {
 	[[self cancelledLock] lock];
-	delegate = newDelegate;
+	delegate = [newDelegate retain] ;
 	[[self cancelledLock] unlock];
 }
 
@@ -710,6 +710,12 @@ static NSOperationQueue *sharedQueue = nil;
 		[[self cancelledLock] unlock];
 		return;
 	}
+    
+    if (delegate) {
+#pragma mark delegate release
+        [delegate release];
+    }
+    
 	[self failWithError:ASIRequestCancelledError];
 	[self setComplete:YES];
 	[self cancelLoad];
@@ -732,6 +738,11 @@ static NSOperationQueue *sharedQueue = nil;
 {
 	[[self cancelledLock] lock];
 
+    if (delegate) {
+#pragma mark delegate release
+        [delegate release];
+    }
+    
 	// Clear delegates
 	[self setDelegate:nil];
 	[self setQueue:nil];
@@ -2022,6 +2033,8 @@ static NSOperationQueue *sharedQueue = nil;
 {
 	if (delegate && [delegate respondsToSelector:didFinishSelector]) {
 		[delegate performSelector:didFinishSelector withObject:self];
+#pragma mark delegate release
+        [delegate release];
 	}
 
 	#if NS_BLOCKS_AVAILABLE
@@ -2040,6 +2053,8 @@ static NSOperationQueue *sharedQueue = nil;
 {
 	if (delegate && [delegate respondsToSelector:didFailSelector]) {
 		[delegate performSelector:didFailSelector withObject:self];
+#pragma mark delegate release
+        [delegate release];
 	}
 
 	#if NS_BLOCKS_AVAILABLE

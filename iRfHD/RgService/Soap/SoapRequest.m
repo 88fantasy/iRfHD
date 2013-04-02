@@ -2,12 +2,13 @@
  SoapRequest.m
  Implementation of the request object used to manage asynchronous requests.
  Author:	Jason Kichline, andCulture - Harrisburg, Pennsylvania USA
-*/
+ */
 
 #import "SoapRequest.h"
 #import "SoapArray.h"
 #import "SoapFault.h"
 #import "Soap.h"
+#import <objc/message.h>
 
 @implementation SoapRequest
 
@@ -22,12 +23,12 @@
 	SoapRequest* request = [[SoapRequest alloc] init];
 	request.url = [NSURL URLWithString: urlString];
 	request.soapAction = soapAction;
-	request.postData = [postData retain];
+	request.postData = postData;
 	request.handler = handler;
 	request.deserializeTo = deserializeTo;
 	request.action = action;
 	request.defaultHandler = nil;
-	return [request autorelease];
+	return request;
 }
 
 + (SoapRequest*) create: (SoapHandler*) handler action: (SEL) action service: (SoapService*) service soapAction: (NSString*) soapAction postData: (NSString*) postData deserializeTo: (id) deserializeTo {
@@ -81,7 +82,7 @@
 	// Create the connection
 	conn = [[NSURLConnection alloc] initWithRequest: request delegate: self];
 	if(conn) {
-		receivedData = [[NSMutableData data] retain];
+		receivedData = [NSMutableData data];
 	} else {
 		// We will want to call the onerror method selector here...
 		if(self.handler != nil) {
@@ -95,10 +96,10 @@
 	SEL onerror = @selector(onerror:);
 	if(self.action != nil) { onerror = self.action; }
 	if([self.handler respondsToSelector: onerror]) {
-		[self.handler performSelector: onerror withObject: error];
+		objc_msgSend(self.handler, onerror, error);
 	} else {
 		if(self.defaultHandler != nil && [self.defaultHandler respondsToSelector:onerror]) {
-			[self.defaultHandler performSelector:onerror withObject: error];
+			objc_msgSend(self.defaultHandler, onerror, error);
 		}
 	}
 	if(self.logging) {
@@ -129,9 +130,7 @@
 
 // Called when the HTTP request fails.
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	[conn release];
 	conn = nil;
-	self.receivedData = nil;
 	[self handleError:error];
 }
 
@@ -141,24 +140,23 @@
 	if(self.logging == YES) {
 		NSString* response = [[NSString alloc] initWithData: self.receivedData encoding: NSUTF8StringEncoding];
 		NSLog(@"%@", response);
-		[response release];
 	}
-
+	
 	CXMLDocument* doc = [[CXMLDocument alloc] initWithData: self.receivedData options: 0 error: &error];
 	if(doc == nil) {
 		[self handleError:error];
 		return;
 	}
-
+	
 	id output = nil;
 	SoapFault* fault = [SoapFault faultWithXMLDocument: doc];
-
+	
 	if([fault hasFault]) {
 		if(self.action == nil) {
 			[self handleFault: fault];
 		} else {
 			if(self.handler != nil && [self.handler respondsToSelector: self.action]) {
-				[self.handler performSelector: self.action withObject: fault];
+				objc_msgSend(self.handler, self.action, fault);
 			} else {
 				NSLog(@"SOAP Fault: %@", fault);
 			}
@@ -179,17 +177,12 @@
 		
 		if(self.action == nil) { self.action = @selector(onload:); }
 		if(self.handler != nil && [self.handler respondsToSelector: self.action]) {
- 			[self.handler performSelector: self.action withObject: output];
+			objc_msgSend(self.handler, self.action, output);
 		} else if(self.defaultHandler != nil && [self.defaultHandler respondsToSelector:@selector(onload:)]) {
 			[self.defaultHandler onload:output];
 		}
 	}
-
-	self.handler = nil;
-	[doc release];
-	[conn release];
 	conn = nil;
-	self.receivedData = nil;
 }
 
 // Called if the HTTP request receives an authentication challenge.
@@ -209,21 +202,8 @@
 - (BOOL) cancel {
 	if(conn == nil) { return NO; }
 	[conn cancel];
-	[conn release];
 	conn = nil;
 	return YES;
-}
-
-// Deallocates the object
-- (void) dealloc {
-	[defaultHandler release];
-	[url release];
-	[soapAction release];
-	[username release];
-	[password release];
-	[deserializeTo release];
-	[postData release];
-	[super dealloc];
 }
 
 @end

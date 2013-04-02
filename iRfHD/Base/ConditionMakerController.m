@@ -31,6 +31,7 @@ static NSString *cmcCellIdentifier = @"ConditionMakerControllerCell";
         self.tableView.allowsSelection = NO;
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.fieldDictionaryList = [NSArray array];
+        self.tableView.allowsSelection = NO;
         controllermode = ConditionMakerModeSingle;
         
         _fieldValues = [NSMutableDictionary dictionary];
@@ -165,9 +166,9 @@ static NSString *cmcCellIdentifier = @"ConditionMakerControllerCell";
 	// the user pressed the "Done" button, so dismiss the keyboard
 	[textField resignFirstResponder];
     if (controllermode == ConditionMakerModeSingle) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(conditionDidMaked:)]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(conditionMakerController:didMaked:)]) {
             NSDictionary *condition = @{textField.accessibilityIdentifier:textField.text};
-            [self.delegate performSelector:@selector(conditionDidMaked:) withObject:condition];
+            [self.delegate performSelector:@selector(conditionMakerController:didMaked:) withObject:self withObject:condition];
         }
     }
 	return YES;

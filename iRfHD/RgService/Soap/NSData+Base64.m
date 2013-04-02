@@ -10,7 +10,7 @@ static char encodingTable[64] = {
 
 - (id)initWithString:(NSString *)string {
 	if (self = [super init]) {
-		[self initWithBase64EncodedString:string];
+		self = [self initWithBase64EncodedString:string];
 	}
 	return self;
 	
@@ -18,7 +18,7 @@ static char encodingTable[64] = {
 
 
 + (NSData *) dataWithBase64EncodedString:(NSString *) string {
-	return [[[NSData allocWithZone:nil] initWithBase64EncodedString:string] autorelease];
+	return [[NSData allocWithZone:nil] initWithBase64EncodedString:string];
 }
 
 - (id) initWithBase64EncodedString:(NSString *) string {

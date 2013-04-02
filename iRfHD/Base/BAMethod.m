@@ -103,6 +103,10 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 
 -(id)invoke:(NSArray *)params
 {
+    NSHTTPCookie* session = [CommonUtil getSession];
+    if (session == nil) {
+        return nil;
+    }
 
 	if (moduleId == nil) {
 		@throw([NSException exceptionWithName:@"错误" reason:@"模块ID不能为空" userInfo:nil]);
@@ -128,14 +132,14 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 		NSUInteger ei = 0;// 
 		for ( NSUInteger i = 0; i < paramsLength; i++) {
 			id paramstype = [params objectAtIndex:i];
-			
 			if ([paramstype isKindOfClass:[NSString class]]  ||[paramstype isKindOfClass:[NSMutableString class]]
-				) {
+				) {     //注意  数字应以字符类型传入 
 				[request setPostValue:(NSString *)[params objectAtIndex:i] forKey:[NSString stringWithFormat:@"%@%d",BAMethod_VALUE_PRIFIX,ei]];
 				[request setPostValue:[NSString stringWithFormat:@"String:%@%d",BAMethod_VALUE_PRIFIX,ei] 
 							   forKey:[NSString stringWithFormat:@"%@%d",BAMethod_PARAMS_PRIFIX,i]];
 				ei++;
-			} else if ([paramstype isKindOfClass:[NSArray class]] || [paramstype isKindOfClass:[NSMutableArray class]] ) {// 
+			}
+            else if ([paramstype isKindOfClass:[NSArray class]] || [paramstype isKindOfClass:[NSMutableArray class]] ) {
 				// Array 
 				NSMutableArray *listparams = [params objectAtIndex:i];
 				NSUInteger plength = [listparams count];
@@ -176,11 +180,33 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 						NSDictionary *map = (NSDictionary *)[listparams objectAtIndex:m];//(Map) listparams.get(m);
 						NSMutableString *mapParamstr = [[NSMutableString alloc]init];
 						//Iterator it = map.keySet().iterator();
-						NSArray *mapallkeys = [map allKeys];
-						for(NSString *key in mapallkeys) {
-							
-							NSString *v = (NSString *)[map objectForKey:key]; 
-							[request setPostValue:v 
+						for(NSString *key in [map allKeys]) {
+							id value = [map objectForKey:key];
+							NSString *v = nil;
+//                            if ([value isKindOfClass:[NSDictionary class]]
+//                                || [value isKindOfClass:[NSMutableDictionary class]]
+//                                || [value isKindOfClass:[NSArray class]]
+//                                || [value isKindOfClass:[NSMutableArray class]]) {
+                            if ([NSJSONSerialization isValidJSONObject:value]) {
+                                NSError *error = nil;
+                                NSData *data =  [NSJSONSerialization dataWithJSONObject:value options:0 error:&error];
+                                if (error) {
+                                    @throw([NSException exceptionWithName:@"错误" reason:@"翻译json错误" userInfo:nil]);
+                                }
+                                v = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ;
+                            }
+                            else if ([value isKindOfClass:[NSNumber class]]) {
+                                if ([value boolValue]) {
+                                    v = @"true";
+                                }
+                                else {
+                                    v = @"false";
+                                }
+                            }
+                            else {
+                                v = [NSString stringWithFormat:@"%@",value];
+                            }
+							[request setPostValue:v
 										   forKey:[NSString stringWithFormat:@"%@%d",BAMethod_VALUE_PRIFIX,ei]];
 							//ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,v));
 							[mapParamstr appendFormat:@"%@,%@%d;",key,BAMethod_VALUE_PRIFIX,ei];
@@ -213,9 +239,32 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 				NSMutableString *paramstr = [[NSMutableString alloc]init];
 				NSDictionary *map = (NSDictionary *)paramstype;
 				//Iterator it = map.keySet().iterator();
-				NSArray *mapallkey = [map allKeys];
-				for(NSString *key in mapallkey) {
-					NSString *v = (NSString *)[map objectForKey:key];
+				for(NSString *key in [map allKeys]) {
+					id value = [map objectForKey:key];
+                    NSString *v = nil;
+                    //                            if ([value isKindOfClass:[NSDictionary class]]
+                    //                                || [value isKindOfClass:[NSMutableDictionary class]]
+                    //                                || [value isKindOfClass:[NSArray class]]
+                    //                                || [value isKindOfClass:[NSMutableArray class]]) {
+                    if ([NSJSONSerialization isValidJSONObject:value]) {
+                        NSError *error = nil;
+                        NSData *data =  [NSJSONSerialization dataWithJSONObject:value options:0 error:&error];
+                        if (error) {
+                            @throw([NSException exceptionWithName:@"翻译json错误" reason:[error localizedDescription] userInfo:nil]);
+                        }
+                        v = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ;
+                    }
+                    else if ([value isKindOfClass:[NSNumber class]]) {
+                        if ([value boolValue]) {
+                            v = @"true";
+                        }
+                        else {
+                            v = @"false";
+                        }
+                    }
+                    else {
+                        v = [NSString stringWithFormat:@"%@",value];
+                    }
 					[request setPostValue:v 
 								   forKey:[NSString stringWithFormat:@"%@%d",BAMethod_VALUE_PRIFIX,ei]];
 					//ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,v));
@@ -248,7 +297,11 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 				//ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"Boolean:"+BAMethod_VALUE_PRIFIX+ei));
 				
 				ei++;
-			} else {
+			} else if ([paramstype isKindOfClass:[NSNull class]]) {
+                [request setPostValue:@"Object:null"
+							   forKey:[NSString stringWithFormat:@"%@%d",BAMethod_PARAMS_PRIFIX,i]];
+                ei++;
+            } else {
 				//throw new Exception("¿‡–Õ" + paramstype.getClass().getName() + "‘› ±≤ª÷ß≥÷£¨«Î¡™œµπ‹¿Ì»À‘±");
 				@throw([NSException exceptionWithName:@"错误,类型暂不支持" reason:[[paramstype class] description] userInfo:nil]);
 			}
@@ -299,177 +352,3 @@ static NSString *BAMethod_VALUE_PRIFIX = @"ajaxParamsValue_";
 
 
 @end
-
-
-/*
- public class BAMethod {
- private String base;//¬∑æ∂
- final String BAMethod_SERVLET_URL = "/bacreatorServlet";
- final String BAMethod_PARAMS_PRIFIX = "ajaxParams_";
- final String BAMethod_VALUE_PRIFIX = "ajaxParamsValue_";
- 
- private String className;
- private String sessionId;
- 
- public BAMethod(String classname,String sessionid,String base){
- this.className = classname;
- this.sessionId = sessionid;
- this.base = base;
- }
- 
- **
- * µ˜”√∑Ω∑®
- * @throws Exception 
- * 
- * */
-/*
-public java.lang.Object invoke(Map properties) throws Exception{
-	
-	String moduleid = (String) properties.get("moduleid");
-	String methodName = (String) properties.get("methodName");
-	String callbackRely = (String) properties.get("callbackRely");
-	if (moduleid == null || "".equals(moduleid)) {
-		throw new Exception("ƒ£øÈID≤ª‘ –ÌŒ™ø’");
-		
-	}
-	if (methodName == null || "".equals(methodName)) {
-		throw new Exception("∏√≤Ÿ◊˜∂‘”¶µƒ∑Ω∑®√˚≤ªƒ‹Œ™ø’");
-		
-	}
-	List<NameValuePair> ajaxHttpParams = new ArrayList<NameValuePair>();  
-	ajaxHttpParams.add(new BasicNameValuePair("className",this.className));
-	ajaxHttpParams.add(new BasicNameValuePair("moduleid",moduleid));
-	ajaxHttpParams.add(new BasicNameValuePair("methodName",methodName));
-	ajaxHttpParams.add(new BasicNameValuePair("callbackRely",callbackRely));   
-	
-	
-	ArrayList params = (ArrayList) properties.get("params");// –Ë“™≈–∂œÀ¸¥Ê≤ª¥Ê‘⁄
-	int paramsLength = 0;
-	if (params != null && params.size()>0) {
-		paramsLength = params.size();
-		int ei = 0;// √ø∏ˆ≤Œ ˝Ãıº˛µƒ÷µ
-		for ( int i = 0; i < paramsLength; i++) {
-			Object paramstype = params.get(i);				
-			if (paramstype instanceof String || paramstype instanceof Long 
-				|| paramstype instanceof Integer || paramstype instanceof Double
-				|| paramstype instanceof Float
-				) {
-				ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,params.get(i).toString()));
-				ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"String:"+BAMethod_VALUE_PRIFIX+ei));
-				
-				ei++;
-			} else if (paramstype instanceof List || paramstype instanceof ArrayList) {// ∑÷ø™ «“ª∏ˆ∂‘œÛªπ «“ª∏ˆ ˝◊È∂‘œÛ.»Áπ˚ «“ª∏ˆ∂‘œÛ£¨æÕ“‘“ª∏ˆObjectø™Õ∑£¨»Áπ˚ «“ª∏ˆ ˝◊È£¨æÕ“‘Arrayø™Õ∑
-				// Array ÷ª÷ß≥÷◊÷∑˚ ˝◊È∫Õ∂‘œÛ ˝◊È
-				List listparams =  (List) params.get(i);
-				int plength = listparams.size();
-				Object mapparamstype =  listparams.get(0);
-				String type=mapparamstype.getClass().getName();
-				if (plength == 0)// »Áπ˚ «ø’µƒ ˝◊È,≥§∂»Œ™0
-					type = "emptyArray";
-				if (mapparamstype instanceof String || mapparamstype instanceof Long 
-					|| mapparamstype instanceof Integer || mapparamstype instanceof Double
-					|| mapparamstype instanceof Float) {
-					
-					StringBuffer paramStr = new StringBuffer();
-					for ( int m = 0; m < plength; m++) {
-						ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,listparams.get(m).toString()));
-						ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i+"_"+m,BAMethod_VALUE_PRIFIX+ei));
-						paramStr.append(BAMethod_PARAMS_PRIFIX+i+"_"+m+",");
-						
-						ei++;
-					}
-					ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"StringArray:"+paramStr.toString()));
-					// StringArray:param1,param2
-					// £¨∆‰÷–param1{key:value}
-				} else if (mapparamstype instanceof Map) { // Map[] ObjectArray:
-					// obj1,obj2
-					// obj1:key,valuehtml;key2,value2html
-					StringBuffer paramStr = new StringBuffer();
-					for ( int m = 0; m < plength; m++) {
-						Map map = (Map) listparams.get(m);
-						StringBuffer mapParamstr = new StringBuffer();
-						Iterator it = map.keySet().iterator();
-						while (it.hasNext()) {
-							String key = (String) it.next();
-							String v = (String) map.get(key);
-							ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,v));
-							mapParamstr.append(key).append(",").append(BAMethod_VALUE_PRIFIX+ei+";");
-							ei++;
-						}
-						ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i+"_"+ m,mapParamstr.toString()));
-						paramStr.append(BAMethod_PARAMS_PRIFIX+i+"_"+ m+",");
-						
-						
-					}
-					ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"ObjectArray:"+paramStr.toString()));
-					// StringArray:param1,param2
-					// £¨∆‰÷–param1{key:value}
-				} else if (type.equals("emptyArray")) {
-					ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"emptyArray:"));
-					// ø’∞◊µƒ ˝◊È
-				} else {
-					throw new Exception("¿‡–Õ" + type + "‘› ±≤ª÷ß≥÷£¨«Î¡™œµπ‹¿Ì»À‘±");
-				}
-			} else if( paramstype instanceof Map) {// Object
-				StringBuffer paramstr = new StringBuffer();
-				Map map = (Map)paramstype;
-				Iterator it = map.keySet().iterator();
-				while (it.hasNext()) {
-					String key = (String) it.next();
-					String v = (String) map.get(key);
-					ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,v));
-					paramstr.append(key).append(",").append(BAMethod_VALUE_PRIFIX+ei+";");
-					ei++;
-				}
-				
-				if (paramstr.length() == 0)
-					paramstr.append("null");// ÷˜“™ «”√”⁄◊™ªØSessionContext
-				ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"Object:"+paramstr.toString()));
-				
-				
-				
-			} else if (paramstype instanceof Boolean) {
-				ajaxHttpParams.add(new BasicNameValuePair(BAMethod_VALUE_PRIFIX+ei,paramstype.toString()));
-				ajaxHttpParams.add(new BasicNameValuePair(BAMethod_PARAMS_PRIFIX+i,"Boolean:"+BAMethod_VALUE_PRIFIX+ei));
-				
-				ei++;
-			} else {
-				throw new Exception("¿‡–Õ" + paramstype.getClass().getName() + "‘› ±≤ª÷ß≥÷£¨«Î¡™œµπ‹¿Ì»À‘±");
-			}
-		}
-	}
-	ajaxHttpParams.add(new BasicNameValuePair("paramsLength",String.valueOf(paramsLength)));
-	
-	//ø™ ºµ˜”√
-	String httpUrl = base + BAMethod_SERVLET_URL;  
-	HttpPost request = new HttpPost(httpUrl);  
-	request.setHeader("Cookie", login.sessionid);
-	JSONObject obj = null;  
-	try {  
-		HttpEntity entity = new UrlEncodedFormEntity(ajaxHttpParams, "UTF-8");  
-		request.setEntity(entity);  
-		HttpClient client = new DefaultHttpClient();
-		
-		HttpResponse response = client.execute(request);  
-		if(response.getStatusLine().getStatusCode()==HttpStatus.SC_OK){  
-			String str = EntityUtils.toString(response.getEntity());  
-			obj = new JSONObject(str);
-		}else{  
-			obj.put("data", "«Î«Û¥ÌŒÛ");  
-		}  
-	} catch (UnsupportedEncodingException e) {  
-		// TODO Auto-generated catch block  
-		e.printStackTrace();  
-	} catch (ClientProtocolException e) {  
-		// TODO Auto-generated catch block  
-		e.printStackTrace();  
-	} catch (IOException e) {  
-		// TODO Auto-generated catch block  
-		e.printStackTrace();  
-	} 		
-	return obj;
-}
-
-}
-
-*/

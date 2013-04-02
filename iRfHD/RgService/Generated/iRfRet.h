@@ -14,7 +14,7 @@
 	
 }
 		
-	@property (strong, nonatomic) NSString* msg;
+	@property (retain, nonatomic) NSString* msg;
 	@property BOOL ret;
 
 	+ (iRfRet*) createWithNode: (CXMLNode*) node;

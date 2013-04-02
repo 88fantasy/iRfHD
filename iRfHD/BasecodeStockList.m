@@ -546,7 +546,7 @@
 
 #pragma mark -
 #pragma mark ConditionMakerControllerDelegate
--(void)conditionDidMaked:(NSDictionary*)makedconditions
+-(void)conditionMakerController:(ConditionMakerController*)conditionMakerController didMaked:(NSDictionary*)makedconditions
 {
     [self.searchPopOver dismissPopoverAnimated:YES];
     self.conditions = makedconditions;

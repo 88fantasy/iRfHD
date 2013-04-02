@@ -28,8 +28,8 @@
 - (NSString *)descriptionWithLocale:(id)locale;
 - (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level;
 - (id)firstObjectCommonWithArray:(NSArray *)otherArray;
-- (void)getObjects:(id *)objects;
-- (void)getObjects:(id *)objects range:(NSRange)range;
+- (void)getObjects:(id __unsafe_unretained *)objects;
+- (void)getObjects:(id __unsafe_unretained *)objects range:(NSRange)range;
 - (NSUInteger)indexOfObject:(id)anObject;
 - (NSUInteger)indexOfObject:(id)anObject inRange:(NSRange)range;
 - (NSUInteger)indexOfObjectIdenticalTo:(id)anObject;
@@ -95,7 +95,7 @@
 + (id)arrayWithCapacity:(NSUInteger)numItems;
 - (id)initWithCapacity:(NSUInteger)numItems;
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len;
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained *)stackbuf count:(NSUInteger)len;
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;

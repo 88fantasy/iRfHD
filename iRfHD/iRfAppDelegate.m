@@ -8,9 +8,10 @@
 
 #import "iRfAppDelegate.h"
 
-#import "ViewController.h"
 #import "RootViewController.h"
 #import "iRfRgService.h"
+
+#import "CustomNavigationBar.h"
 
 
 @implementation iRfAppDelegate
@@ -28,10 +29,10 @@
     // Override point for customization after application launch.
     
     RootViewController *root = [[RootViewController alloc]initWithStyle:UITableViewStylePlain];
-    self.navigationController = [[ViewController alloc] initWithRootViewController:root];
+    self.navigationController = [[UINavigationController alloc] initWithNavigationBarClass:[CustomNavigationBar class] toolbarClass:nil];
+    [self.navigationController setViewControllers:@[root]];
     
     self.navigationController.delegate = self;
-//    self.navigationController.navigationBar.tintColor = [UIColor lightGrayColor];
     
     self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
