@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "KDGoalBar.h"
 
-//@protocol ScanViewDelegate 
-////回调函数 
-//-(void)confirmCallBack:(BOOL )_confirm values:(NSDictionary *)_obj; 
-//@end
+@protocol RgViewDelegate;
+
 
 @interface RgView : UIViewController
 <ZBarReaderDelegate,UITextFieldDelegate,UIActionSheetDelegate>
@@ -37,7 +35,7 @@
     NSDictionary *values;
     
     BOOL readOnlyFlag;
-//    id<ScanViewDelegate> scanViewDelegate;
+    __weak id<RgViewDelegate> delegate;
     
     UIAlertView *goalBarView;
     KDGoalBar *goalBar;
@@ -64,7 +62,7 @@
 @property (nonatomic, strong) IBOutlet UITextField *vendername;
 @property (nonatomic, strong) IBOutlet NSString *spdid;
 @property (nonatomic, strong) IBOutlet NSDictionary *values;
-//@property (nonatomic,strong) id<ScanViewDelegate>  scanViewDelegate;
+@property (nonatomic,weak) id<RgViewDelegate>  delegate;
 
 @property (nonatomic, strong) UIAlertView *goalBarView;
 @property (nonatomic, strong) KDGoalBar *goalBar;
@@ -74,4 +72,11 @@
 - (IBAction) scrollToBottom:(id)sender;
 
 - (IBAction) scanButtonTapped;
+@end
+
+
+@protocol RgViewDelegate <NSObject>
+
+@optional
+-(void) rgViewDidConfirm:(RgView*)rgview ;
 @end

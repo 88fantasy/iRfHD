@@ -69,7 +69,7 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
     self.searchPopOver.delegate = self;
     
     
-    goodsDataSetRequest = [[DataSetRequest alloc]initWithGridcode:@"hscm-goods-split-stock-sns" querytype:@"table" datasource:@"hscm_goods_stock_v" querymoduleid:@"all" sumfieldnames:nil];
+    goodsDataSetRequest = [[DataSetRequest alloc]initWithGridcode:@"hscm-goods-stock-sns" querytype:@"table" datasource:@"hscm_stock_group_v" querymoduleid:@"all" sumfieldnames:nil];
     goodsDataSetRequest.delegate = self;
     
     [self.inTable registerNib:[UINib nibWithNibName:@"RedressCell" bundle:nil] forCellReuseIdentifier:inTableCellIdentifier];
@@ -78,6 +78,7 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
     
     soDataSetRequest = [[DataSetRequest alloc]initWithGridcode:@"func-somgr-all-grid" querytype:@"table" datasource:@"hscm_so_doc_dtl_v" querymoduleid:@"all" sumfieldnames:nil];
     soDataSetRequest.delegate = self;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -191,14 +192,26 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
         cell = [[UITableViewCell alloc] initWithStyle:celltype reuseIdentifier:identifier] ;
         cell.accessoryType = accessoryType;
         
-//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
 	
     if (tableView == self.goodsTable.tableView) {
         NSArray *goods =  [goodsDataSetRequest.userInfo objectForKey:kRedressViewGoodsKey];
         NSDictionary *good = goods[indexPath.row];
-        cell.textLabel.text = [NSString stringWithFormat:@"%@  %@",[good objectForKey:@"hisgdsid"],[good objectForKey:@"goodsname"]];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ 药库:%@ 药房%@",[good objectForKey:@"goodstype"],[good objectForKey:@"warrealqty"],[good objectForKey:@"houserealqty"]  ];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@[%@]  %@%@",
+                               [good objectForKey:@"goodsname"],
+                               [good objectForKey:@"hisgdsid"],
+                               [good objectForKey:@"goodsqty"],
+                               [good objectForKey:@"goodsunit"]
+                               ];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ 货位[%@] 生产日期[%@] 失效期[%@] 有效期至[%@]",
+                                     
+                                     [good objectForKey:@"goodstype"],
+                                     [good objectForKey:@"locno"],
+                                     [good objectForKey:@"proddate"],
+                                     [good objectForKey:@"invaliddate"],
+                                     [good objectForKey:@"validto"]
+                                    ];
     }
     else if (tableView == self.inTable || tableView == self.outTable) {
         RedressCell *cel = (RedressCell*)cell;
@@ -206,23 +219,35 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
         if (tableView == self.inTable) {
             dict = [inDataList objectAtIndex:indexPath.row];
             cel.goodsqty.enabled = NO;
-            cel.downgrade.enabled = NO;
         }
         else {
             dict = [outDataList objectAtIndex:indexPath.row];
         }
         cel.goodsname.text = [dict objectForKey:@"goodsname"];
-        cel.goodsqty.text = [dict objectForKey:@"goodsqty"];
-        cel.downgrade.selectedSegmentIndex = [[dict objectForKey:@"downgraded"] integerValue];
+        cel.goodsqty.text = [dict objectForKey:@"useqty"];
+        cel.goodsunit.text = [dict objectForKey:@"goodsunit"];
         cel.cellData = dict;
+        
     }
     else if (tableView == self.soTable) {
         NSArray *sos = [soDataSetRequest.userInfo objectForKey:kRedressViewSoKey];
         NSArray *dtl =  [[sos objectAtIndex:indexPath.section] objectForKey:@"dtl"];
         NSDictionary *dict = [dtl objectAtIndex:indexPath.row];
-        cell.textLabel.text = [NSString stringWithFormat:@"%@  %@%@",[dict objectForKey:@"goodsname"],[dict objectForKey:@"goodsqty"],[dict objectForKey:@"goodsunit"]];
-        NSString *downgrade = [@"0" isEqualToString:[dict objectForKey:@"downgraded"]]?@"原":@"散";
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@  %@",downgrade,[dict objectForKey:@"hisgdsid"]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@(%@)  %@%@",
+                               [dict objectForKey:@"goodsname"],
+                               [dict objectForKey:@"hisgdsid"],
+                               [dict objectForKey:@"goodsqty"],
+                               [dict objectForKey:@"goodsunit"]
+                            ];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"批号[%@] 生产日期[%@] 失效期[%@] 有效期至[%@]",
+                                     [dict objectForKey:@"lotno"],
+                                     [dict objectForKey:@"proddate"],
+                                     [dict objectForKey:@"invaliddate"],
+                                     [dict objectForKey:@"validto"]
+                                    ];
+        UIImageView *uncheck = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"unchecked.png"]];
+        cell.accessoryView = uncheck;
+        
 	}
     return cell;
 }
@@ -244,12 +269,8 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
     if (tableView == self.goodsTable.tableView) {
         NSArray *goods =  [goodsDataSetRequest.userInfo objectForKey:kRedressViewGoodsKey];
         NSDictionary *good = goods[indexPath.row];
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                     [good objectForKey:@"hisgdsid"],@"hisgdsid",
-                                     [good objectForKey:@"goodsname"],@"goodsname",
-                                     @"1",@"goodsqty",
-                                     @"0",@"downgrade"
-                                     ,nil];
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:good];
+        [dict setObject:@"1" forKey:@"useqty"];
         [outDataList addObject:dict];
         [self.outTable reloadData];
         [self.searchPopOver dismissPopoverAnimated:YES];
@@ -283,17 +304,27 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (tableView == self.soTable) {
+        
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView =  [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"checked.png"]];
+
+        
+        
         NSArray *sos =  [soDataSetRequest.userInfo objectForKey:kRedressViewSoKey];
         NSArray *dtls = [sos[indexPath.section] objectForKey:@"dtl"];
         NSDictionary *dtl = dtls[indexPath.row];
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                     [dtl objectForKey:@"hisgdsid"],@"hisgdsid",
-                                     [dtl objectForKey:@"goodsname"],@"goodsname",
-                                     [dtl objectForKey:@"goodsqty"],@"goodsqty",
-                                     [dtl objectForKey:@"downgrade"],@"downgrade"
-                                     ,nil];
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:dtl];
+        [dict setObject:[dtl objectForKey:@"goodsqty"] forKey:@"useqty"];
         [inDataList addObject:dict];
         [self.inTable reloadData];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView == self.soTable) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView =  [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"unchecked.png"]];
     }
 }
 
@@ -326,8 +357,20 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
         NSDate *threeMonthsBefore = [NSDate dateWithTimeIntervalSinceNow: - 60 * 60 * 24 * 90 ];
         NSString *threeMonthsBeforeStr = [CommonUtil stringFromDate:threeMonthsBefore];
         
+        
+        NSDictionary *searchfield = nil;
+        
+        NSScanner* scan = [NSScanner scannerWithString:searchBar.text];
+        int val;
+        if([scan scanInt:&val] && [scan isAtEnd]){
+            searchfield = NSMakeConditionClike(@"orgsoid", searchBar.text);
+        }
+        else {
+            searchfield = NSMakeConditionClike(@"customname", searchBar.text);
+        }
+        
         [soDataSetRequest doQueryWithConditions:@[
-                NSMakeConditionClike(@"customname", searchBar.text),
+                searchfield,
                 NSMakeConditionCbigEqual(@"inputdate", threeMonthsBeforeStr),
                 NSMakeConditionCeq(@"sotype", @"1"), //销售
                 NSMakeConditionCeq(@"dtlconfirmflag", @"1")
@@ -335,6 +378,7 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
     }
     [searchBar resignFirstResponder];
 }
+
 
 #pragma mark -
 #pragma mark reset
@@ -442,7 +486,8 @@ static NSString *goodsTableCellIdentifier = @"RedressViewGoodsTableCell";
             [self.goodsTable.tableView reloadData];
         }
         else if (rows.count == 1) {
-            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:[rows[0] objectForKey:@"goodsname"] forKey:@"goodsname"];
+            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:rows[0]];
+//            [dict setObject:@"1" forKey:@"useqty"];
             [outDataList addObject:dict];
             [self.outTable reloadData];
         }

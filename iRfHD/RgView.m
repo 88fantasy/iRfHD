@@ -19,6 +19,7 @@
 
 @synthesize spdid,values;
 @synthesize goalBarView,goalBar;
+@synthesize delegate;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil values:(NSDictionary*)obj
 //         readOnlyFlag:(BOOL) _readOnlyFlag
@@ -229,7 +230,9 @@
             NSString *retflag = (NSString*) [ret objectForKey:kRetFlagKey];
             
             if ([retflag boolValue]==YES) {
-                [values setValue:@"1" forKey:@"rgflag"];
+                if (delegate && [delegate respondsToSelector:@selector(rgViewDidConfirm:)]) {
+                    [delegate performSelector:@selector(rgViewDidConfirm:) withObject:self  withObject:error];
+                }
                 //            NSDictionary *msg = (NSDictionary*) [ret objectForKey:kMsgKey];
                 //            NSString *sid = (NSString*) [msg objectForKey:@"spdid"];
                 
@@ -241,11 +244,6 @@
                     }
                 }
                 
-                //            if (self.scanViewDelegate!=nil) {
-                //                //调用回调函数
-                //                [self.scanViewDelegate confirmCallBack:YES values:values];
-                //            }
-                //            [self.navigationController popViewControllerAnimated:YES];
             }
             else{
                 NSString *msg = (NSString*) [ret objectForKey:kMsgKey];
@@ -451,9 +449,12 @@
             NSString *retflag = (NSString*) [ret objectForKey:kRetFlagKey];
             
             if ([retflag boolValue]==YES) {
-                NSDictionary *msg = (NSDictionary*) [ret objectForKey:kMsgKey];
-                NSString *idv = (NSString*) [msg objectForKey:@"spdid"];
+                
                 if ([RootViewController isSync]) {
+                    NSDictionary *msg = (NSDictionary*) [ret objectForKey:kMsgKey];
+                    NSString *idv = (NSString*) [msg objectForKey:@"spdid"];
+                
+                
                     FMDatabase *db = [DbUtil retConnectionForResource:@"iRf" ofType:@"rdb"];
                     if(db != nil) {
                         [db executeUpdate:@"update scm_rg set rgdate = datetime('now') where spdid = ?",idv];

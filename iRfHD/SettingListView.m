@@ -221,25 +221,25 @@ typedef NS_OPTIONS(NSUInteger, SettingListSectionTypeExtraRow) {
             }
             else if (indexPath.row == SettingListSectionTypeServerRowApns){
                 cell.textLabel.text = @"推送服务";
-                
-                UIRemoteNotificationType rntype = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-                
-                CGRect frame = CGRectMake(0, kTopMargin, 27.0, kTextFieldHeight);
-                UISwitch *pns = [[UISwitch alloc] initWithFrame:frame];
-                pns.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
-                UIViewAutoresizingFlexibleTopMargin |
-                UIViewAutoresizingFlexibleRightMargin;
-                
-                if (rntype!=UIRemoteNotificationTypeNone) {
-                    [pns setOn:YES];
-                }
-                else{
-                    [pns setOn:NO];
-                }
-                
-                [pns addTarget:self action:@selector(doApnsChange:) forControlEvents:UIControlEventValueChanged];
-                
-                cell.accessoryView = pns;
+                cell.detailTextLabel.text = @"暂不支持推送";
+//                UIRemoteNotificationType rntype = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+//                
+//                CGRect frame = CGRectMake(0, kTopMargin, 27.0, kTextFieldHeight);
+//                UISwitch *pns = [[UISwitch alloc] initWithFrame:frame];
+//                pns.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+//                UIViewAutoresizingFlexibleTopMargin |
+//                UIViewAutoresizingFlexibleRightMargin;
+//                
+//                if (rntype!=UIRemoteNotificationTypeNone) {
+//                    [pns setOn:YES];
+//                }
+//                else{
+//                    [pns setOn:NO];
+//                }
+//                
+//                [pns addTarget:self action:@selector(doApnsChange:) forControlEvents:UIControlEventValueChanged];
+//                
+//                cell.accessoryView = pns;
                 
             }
         }

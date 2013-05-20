@@ -312,7 +312,7 @@
         if (count == 1) {
             NSDictionary *obj = (NSDictionary*)[rows objectAtIndex:0];
             RgView *rgView = [[RgView alloc] initWithNibName:@"RgView" bundle:nil values:obj ];
-            //                    rgView.scanViewDelegate = self;
+//                    rgView.delegate = self;
             [self.navigationController pushViewController:rgView animated:YES];
             
         }

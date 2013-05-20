@@ -9,9 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "RgListSearchView.h"
 #import "KDGoalBar.h"
+#import "RgView.h"
 
 @interface RgListView : UITableViewController
 <UITableViewDelegate,UITableViewDataSource,RgListSearchViewDelegate,
+RgViewDelegate,
 UIActionSheetDelegate>
 {
     NSMutableArray *menuList;

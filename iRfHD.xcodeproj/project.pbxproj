@@ -60,6 +60,8 @@
 		8F1B4D401705479500171E75 /* help@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4D371705479500171E75 /* help@2x.png */; };
 		8F1B4D411705479500171E75 /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4D381705479500171E75 /* info.png */; };
 		8F1B4D421705479500171E75 /* info@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4D391705479500171E75 /* info@2x.png */; };
+		8F1B71CA1712A468007614C1 /* checked.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B71C81712A468007614C1 /* checked.png */; };
+		8F1B71CB1712A468007614C1 /* unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B71C91712A468007614C1 /* unchecked.png */; };
 		8F5E062316F9AFC0006ED91B /* ConditionMakerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5E062216F9AFC0006ED91B /* ConditionMakerController.m */; };
 		8F6B911316F6B91500A65281 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6B911216F6B91500A65281 /* UIKit.framework */; };
 		8F6B911516F6B91500A65281 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6B911416F6B91500A65281 /* Foundation.framework */; };
@@ -295,6 +297,8 @@
 		8F1B4D371705479500171E75 /* help@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help@2x.png"; sourceTree = "<group>"; };
 		8F1B4D381705479500171E75 /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = "<group>"; };
 		8F1B4D391705479500171E75 /* info@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info@2x.png"; sourceTree = "<group>"; };
+		8F1B71C81712A468007614C1 /* checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checked.png; sourceTree = "<group>"; };
+		8F1B71C91712A468007614C1 /* unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unchecked.png; sourceTree = "<group>"; };
 		8F5E062116F9AFC0006ED91B /* ConditionMakerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionMakerController.h; sourceTree = "<group>"; };
 		8F5E062216F9AFC0006ED91B /* ConditionMakerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConditionMakerController.m; sourceTree = "<group>"; };
 		8F6B910F16F6B91500A65281 /* iRfHD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iRfHD.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -681,6 +685,15 @@
 			path = GRAlertView;
 			sourceTree = "<group>";
 		};
+		8F1B71C71712A468007614C1 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				8F1B71C81712A468007614C1 /* checked.png */,
+				8F1B71C91712A468007614C1 /* unchecked.png */,
+			);
+			path = icons;
+			sourceTree = "<group>";
+		};
 		8F6B910616F6B91500A65281 = {
 			isa = PBXGroup;
 			children = (
@@ -724,6 +737,7 @@
 		8F6B911816F6B91500A65281 /* iRfHD */ = {
 			isa = PBXGroup;
 			children = (
+				8F1B71C71712A468007614C1 /* icons */,
 				8F1B4D2F1705479500171E75 /* GRAlertView */,
 				8F6B92AA16F6CCD700A65281 /* Resource */,
 				8F6B927E16F6BD1B00A65281 /* Base */,
@@ -1267,6 +1281,8 @@
 				8F1B4D401705479500171E75 /* help@2x.png in Resources */,
 				8F1B4D411705479500171E75 /* info.png in Resources */,
 				8F1B4D421705479500171E75 /* info@2x.png in Resources */,
+				8F1B71CA1712A468007614C1 /* checked.png in Resources */,
+				8F1B71CB1712A468007614C1 /* unchecked.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
