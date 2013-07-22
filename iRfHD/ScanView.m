@@ -127,6 +127,8 @@
 	// the user pressed the "Done" button, so dismiss the keyboard
 	[textField resignFirstResponder];
     [self searchButtonTapped];
+    [textField selectAll:self];
+    [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
 	return YES;
 }
 

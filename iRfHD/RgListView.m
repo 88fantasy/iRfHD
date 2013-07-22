@@ -190,15 +190,6 @@ static NSString *kObjKey = @"obj";
  }
  */
 
-#pragma mark -
-#pragma mark ScanView delegate
-//-(void)confirmCallBack:(BOOL )_confirm  values:(NSDictionary *)_obj{
-//    NSUInteger index = [self.objs indexOfObject:_obj];
-//    NSDictionary *obj = [self.objs objectAtIndex:index];
-//    [obj setValue:@"1" forKey:@"rgflag"];
-//    [obj release];
-//}
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
