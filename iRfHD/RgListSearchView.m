@@ -119,6 +119,10 @@
        [searchFields setObject:[self.prodarea.text stringByAppendingString:@"%"] forKey:@"prodarea"];
     }
     
+    if (![self.vender.text isEqualToString:@""] && self.vender.text != nil) {
+        [searchFields setObject:[self.vender.text stringByAppendingString:@"%"] forKey:@"uvender"];
+    }
+    
     if (![self.lotno.text isEqualToString:@""] && self.lotno.text != nil) {
         [searchFields setObject:self.lotno.text forKey:@"lotno"];
     }
@@ -133,10 +137,6 @@
     
     if (![self.enddate.text isEqualToString:@""] && self.enddate.text != nil) {
         [searchFields setObject:self.enddate.text forKey:@"enddate"];
-    }
-    
-    if (![self.vender.text isEqualToString:@""] && self.vender.text != nil) {
-        [searchFields setObject:self.vender.text forKey:@"uvender"];
     }
     
     if (self.rgflag.selectedSegmentIndex != 0) {

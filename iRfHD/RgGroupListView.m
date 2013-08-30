@@ -321,6 +321,14 @@ static NSString *kCellIdentifier = @"MyIdentifier";
         rsv.prodarea.text = prodarea;
     }
     
+    NSString *uvender = [self.searchObj objectForKey:@"uvender"];
+    if (uvender != nil && ![@"" isEqualToString:uvender]) {
+        if ([[uvender substringFromIndex:[uvender length]-1] isEqualToString:@"%"]) {
+            uvender = [uvender substringToIndex:[uvender length]-1];
+        }
+        rsv.vender.text = uvender;
+    }
+    
     rsv.lotno.text = [self.searchObj objectForKey:@"lotno"];
     rsv.invno.text = [self.searchObj objectForKey:@"invno"];
     rsv.startdate.text = [self.searchObj objectForKey:@"startdate"];
