@@ -11,7 +11,7 @@
 
 @implementation RgListSearchView
 
-@synthesize scrollView,goodsname,prodarea,lotno,invno,startdate,enddate,goodspy,rgflag;
+@synthesize scrollView,goodsname,prodarea,lotno,invno,startdate,enddate,goodspy,vender,rgflag;
 @synthesize finButton,tmp;
 @synthesize rgListSearchViewDelegate;
 
@@ -133,6 +133,10 @@
     
     if (![self.enddate.text isEqualToString:@""] && self.enddate.text != nil) {
         [searchFields setObject:self.enddate.text forKey:@"enddate"];
+    }
+    
+    if (![self.vender.text isEqualToString:@""] && self.vender.text != nil) {
+        [searchFields setObject:self.vender.text forKey:@"uvender"];
     }
     
     if (self.rgflag.selectedSegmentIndex != 0) {

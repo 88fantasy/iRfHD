@@ -277,6 +277,10 @@ static NSString *kObjKey = @"obj";
             if (![goodspy isEqualToString:@""] && goodspy != nil) {
                 sql = [sql stringByAppendingFormat:@" and goodspy like '%@%%'",goodspy];
             }
+            NSString *uvender = [self.searchObj objectForKey:@"uvender"];
+            if (![goodspy isEqualToString:@""] && goodspy != nil) {
+                sql = [sql stringByAppendingFormat:@" and uvender like '%@%%'",uvender];
+            }
             NSString *rgflag = [self.searchObj objectForKey:@"rgflag"];
             if (![rgflag isEqualToString:@""] && rgflag != nil) {
                 if ([rgflag isEqualToString:@"1"]) {
@@ -429,6 +433,7 @@ static NSString *kObjKey = @"obj";
             NSString *goodsunit = [obj objectForKey:@"goodsunit"];
             NSString *prodarea = [obj objectForKey:@"prodarea"];
             NSString *companyname = [obj objectForKey:@"socompanyname"];
+            NSString *uvender = [obj objectForKey:@"uvender"];
             
             NSString *detailText = @"";
             if ([labeltype isEqualToString:@"1"]) {
@@ -456,6 +461,10 @@ static NSString *kObjKey = @"obj";
             if (companyname != nil) {
                 detailText = [detailText stringByAppendingString:@"     "];
                 detailText = [detailText stringByAppendingString:companyname];
+            }
+            if (uvender != nil) {
+                detailText = [detailText stringByAppendingString:@"     "];
+                detailText = [detailText stringByAppendingString:uvender];
             }
             
             

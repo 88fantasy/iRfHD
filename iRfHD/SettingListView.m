@@ -392,12 +392,13 @@ typedef NS_OPTIONS(NSUInteger, SettingListSectionTypeExtraRow) {
             if ([retflag boolValue]==YES) {
                 [self loginSuccess];
             }
-            NSString *msg = (NSString*) [ret objectForKey:kMsgKey];
-            if ([msg isKindOfClass:[NSNull class]]) {
-                msg = @"空指针";
+            else{
+                NSString *msg = (NSString*) [ret objectForKey:kMsgKey];
+                if ([msg isKindOfClass:[NSNull class]]) {
+                    msg = @"空指针";
+                }
+                [CommonUtil alert:NSLocalizedString(@"Error", @"Error") msg:msg];
             }
-            [CommonUtil alert:NSLocalizedString(@"Info", @"Info") msg:msg];
-            
         }
     }
 }

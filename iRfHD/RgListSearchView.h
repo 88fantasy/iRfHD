@@ -25,6 +25,7 @@
     UITextField *startdate;
     UITextField *enddate;
     UITextField *goodspy;
+    UITextField *vender;
     
     UISegmentedControl *rgflag;
     
@@ -42,6 +43,7 @@
 @property (nonatomic, strong) IBOutlet UITextField *startdate;
 @property (nonatomic, strong) IBOutlet UITextField *enddate;
 @property (nonatomic, strong) IBOutlet UITextField *goodspy;
+@property (nonatomic, strong) IBOutlet UITextField *vender;
 @property (nonatomic, strong) IBOutlet UISegmentedControl *rgflag;
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *finButton;
