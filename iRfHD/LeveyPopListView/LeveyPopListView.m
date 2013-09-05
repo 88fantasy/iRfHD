@@ -190,4 +190,8 @@
     CGContextFillRect(ctx, separatorRect);
 }
 
+- (NSArray*)options {
+    return _options;
+}
+
 @end

@@ -11,7 +11,7 @@
 
 @implementation RgListSearchView
 
-@synthesize scrollView,goodsname,prodarea,lotno,invno,startdate,enddate,goodspy,vender,rgflag;
+@synthesize scrollView,goodsname,prodarea,lotno,invno,startdate,enddate,goodspy,vender,rgflag,fuzzy;
 @synthesize finButton,tmp;
 @synthesize rgListSearchViewDelegate;
 
@@ -109,18 +109,36 @@
 - (IBAction) finSearch:(id)sender{
     NSMutableDictionary *searchFields = [NSMutableDictionary dictionary];
     if (![self.goodspy.text isEqualToString:@""] && self.goodspy.text != nil) {
-        [searchFields setObject:[self.goodspy.text stringByAppendingString:@"%"] forKey:@"goodspy"];
+        if (self.fuzzy.on) {
+            [searchFields setObject:[NSString stringWithFormat:@"%%%@%%",self.goodspy.text] forKey:@"goodspy"];
+        }
+        else {
+            [searchFields setObject:[NSString stringWithFormat:@"%@%%",self.goodspy.text] forKey:@"goodspy"];
+        }
     }
     if (![self.goodsname.text isEqualToString:@""] && self.goodsname.text != nil) {
-        [searchFields setObject:[self.goodsname.text stringByAppendingString:@"%"] forKey:@"goodsname"];
+        if (self.fuzzy.on) {
+            [searchFields setObject:[NSString stringWithFormat:@"%%%@%%",self.goodsname.text] forKey:@"goodsname"];
+        }
+        else {
+            [searchFields setObject:[NSString stringWithFormat:@"%@%%",self.goodsname.text] forKey:@"goodsname"];
+        }
     }
-    
     if (![self.prodarea.text isEqualToString:@""] && self.prodarea.text != nil) {
-       [searchFields setObject:[self.prodarea.text stringByAppendingString:@"%"] forKey:@"prodarea"];
+        if (self.fuzzy.on) {
+            [searchFields setObject:[NSString stringWithFormat:@"%%%@%%",self.prodarea.text] forKey:@"prodarea"];
+        }
+        else {
+            [searchFields setObject:[NSString stringWithFormat:@"%@%%",self.prodarea.text] forKey:@"prodarea"];
+        }
     }
-    
     if (![self.vender.text isEqualToString:@""] && self.vender.text != nil) {
-        [searchFields setObject:[self.vender.text stringByAppendingString:@"%"] forKey:@"uvender"];
+        if (self.fuzzy.on) {
+            [searchFields setObject:[NSString stringWithFormat:@"%%%@%%",self.vender.text] forKey:@"uvender"];
+        }
+        else {
+            [searchFields setObject:[NSString stringWithFormat:@"%@%%",self.vender.text] forKey:@"uvender"];
+        }
     }
     
     if (![self.lotno.text isEqualToString:@""] && self.lotno.text != nil) {
@@ -146,7 +164,10 @@
         else if (self.rgflag.selectedSegmentIndex == 2) {
             [searchFields setObject:@"1" forKey:@"rgflag"];
         }
-        
+    }
+    
+    if (self.fuzzy.on) {
+        [searchFields setObject:@"1" forKey:@"isFuzzy"];
     }
     
     [self.navigationController popViewControllerAnimated:YES];

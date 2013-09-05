@@ -23,7 +23,7 @@ static NSString *kObjKey = @"obj";
 
 @synthesize menuList,objs,refreshButtonItem,searchObj;
 @synthesize goalBar,goalBarView;
-
+@synthesize titleBtn;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -77,6 +77,13 @@ static NSString *kObjKey = @"obj";
     titleFontSize = 20;
     detailFontSize = 17;
     
+    self.titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.titleBtn setTitle:@"收货明细列表▾" forState:UIControlStateNormal];
+    [self.titleBtn addTarget:self action:@selector(showConditionList) forControlEvents:UIControlEventTouchUpInside];
+    self.titleBtn.frame = CGRectMake(0, 0, 200, 31);
+    [self.titleBtn setCenter:self.navigationItem.titleView.center];
+    self.navigationItem.titleView = self.titleBtn;
+    
     [self resetBarbutton];
     
     [self reload];
@@ -94,45 +101,67 @@ static NSString *kObjKey = @"obj";
 
 #pragma mark - Table view data source
 
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    // Return the number of sections.
-//    return [menuList count];
-//}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    int total = 0;
+    for (int i=0,j=self.menuList.count; i<j; i++) {
+        NSArray *array = [[self.menuList objectAtIndex:i] objectForKey:@"array"];
+        total += array.count;
+    }
+    
+    NSString *rgflag = [self.searchObj objectForKey:@"rgflag"];
+    NSString *title = nil;
+    if (rgflag == nil) {
+        title = [NSString stringWithFormat:@"收货明细列表 (%d)▾" ,total] ;
+    }
+    else if ([rgflag isEqualToString:@"1"]){
+        title = [NSString stringWithFormat:@"已收货 (%d)▾" ,total] ;
+    }
+    else {
+        title = [NSString stringWithFormat:@"未收货 (%d)▾" ,total] ;
+    }
+    
+    [self.titleBtn setTitle:title forState:UIControlStateNormal];
+    
+    // Return the number of sections.
+    return [self.menuList count];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    
+    NSDictionary *sectionboj = [self.menuList objectAtIndex:section] ;
+    NSString *uvender = [sectionboj objectForKey:@"uvender"];
+    return uvender;
+    
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    NSString *rgflag = [self.searchObj objectForKey:@"rgflag"];
-    if (rgflag == nil) {
-        self.title = [NSString stringWithFormat:@"收货明细列表 (%d)" ,[self.menuList count]] ;
-    }
-    else if ([rgflag isEqualToString:@"1"]){
-        self.title = [NSString stringWithFormat:@"已收货 (%d)" ,[self.menuList count]] ;
-    }
-    else {
-        self.title = [NSString stringWithFormat:@"未收货 (%d)" ,[self.menuList count]] ;
-    }
-    
-    return [self.menuList count];
+    NSArray *array = [[self.menuList objectAtIndex:section] objectForKey:@"array"];
+    return [array count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[[self.menuList objectAtIndex:indexPath.row] objectForKey:kCellIdentifier]];
+    NSArray *array = [[self.menuList objectAtIndex:indexPath.section] objectForKey:@"array"];
+    NSDictionary *row = [array objectAtIndex:indexPath.row];
+    NSString *cellid = [row objectForKey:kCellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellid];
 	if (cell == nil)
 	{
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:[[self.menuList objectAtIndex:indexPath.row] objectForKey:kCellIdentifier]] ;
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellid] ;
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
 	
-	cell.textLabel.text = [[self.menuList objectAtIndex:indexPath.row] objectForKey:kTitleKey];
+	cell.textLabel.text = [row objectForKey:kTitleKey];
     [cell.textLabel setFont: [UIFont fontWithName:@"Heiti SC" size:titleFontSize]];
-    cell.detailTextLabel.text = [[self.menuList objectAtIndex:indexPath.row] objectForKey:kExplainKey];
+    cell.detailTextLabel.text = [row objectForKey:kExplainKey];
     [cell.detailTextLabel setFont: [UIFont fontWithName:@"Heiti SC" size:detailFontSize]];
     cell.detailTextLabel.textAlignment = NSTextAlignmentLeft;
     
-    NSDictionary *obj = [[self.menuList objectAtIndex:indexPath.row] objectForKey:kObjKey];
+    NSDictionary *obj = [row objectForKey:kObjKey];
     
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
@@ -471,12 +500,32 @@ static NSString *kObjKey = @"obj";
             
             NSString *idv = [obj objectForKey:@"spdid"];
             
-            [self.menuList addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                      text, kTitleKey,
-                                      detailText, kExplainKey,
-                                      obj,kObjKey,
-                                      idv,kCellIdentifier,
-                                      nil]];
+            NSDictionary *row = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 text, kTitleKey,
+                                 detailText, kExplainKey,
+                                 obj,kObjKey,
+                                 idv,kCellIdentifier,
+                                 nil];
+            
+            
+            int j=0;
+            for (; j<[self.menuList count]; j++) {
+                if ([uvender isEqualToString:[[self.menuList objectAtIndex:j] objectForKey:@"uvender"]]) {
+                    break;
+                }
+            }
+            if (j==[self.menuList count]) {
+                NSMutableArray *array = [NSMutableArray arrayWithObject:row];
+                NSDictionary *section = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         uvender,@"uvender",
+                                         array,@"array",
+                                         nil];
+                [self.menuList addObject:section];
+            }
+            else{
+                NSMutableArray *array = [[self.menuList objectAtIndex:j] objectForKey:@"array"];
+                [array addObject:row];
+            }
             
         }
         
@@ -495,33 +544,21 @@ static NSString *kObjKey = @"obj";
     
     NSString *goodspy = [self.searchObj objectForKey:@"goodspy"];
     if (goodspy != nil && ![@"" isEqualToString:goodspy]) {
-        if ([[goodspy substringFromIndex:[goodspy length]-1] isEqualToString:@"%"]) {
-            goodspy = [goodspy substringToIndex:[goodspy length]-1];
-        }
-        rsv.goodspy.text = goodspy;
+        rsv.goodspy.text = [goodspy stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     NSString *goodsname = [self.searchObj objectForKey:@"goodsname"];
     if (goodsname != nil && ![@"" isEqualToString:goodsname]) {
-        if ([[goodsname substringFromIndex:[goodsname length]-1] isEqualToString:@"%"]) {
-            goodsname = [goodsname substringToIndex:[goodsname length]-1];
-        }
-        rsv.goodsname.text = goodsname;
+        rsv.goodsname.text = [goodsname stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     NSString *prodarea = [self.searchObj objectForKey:@"prodarea"];
     if (prodarea != nil && ![@"" isEqualToString:prodarea]) {
-        if ([[prodarea substringFromIndex:[prodarea length]-1] isEqualToString:@"%"]) {
-            prodarea = [prodarea substringToIndex:[prodarea length]-1];
-        }
-        rsv.prodarea.text = prodarea;
+        rsv.prodarea.text = [prodarea stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     NSString *uvender = [self.searchObj objectForKey:@"uvender"];
     if (uvender != nil && ![@"" isEqualToString:uvender]) {
-        if ([[uvender substringFromIndex:[uvender length]-1] isEqualToString:@"%"]) {
-            uvender = [uvender substringToIndex:[uvender length]-1];
-        }
-        rsv.vender.text = uvender;
+        rsv.vender.text = [uvender stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     rsv.lotno.text = [self.searchObj objectForKey:@"lotno"];
@@ -538,6 +575,13 @@ static NSString *kObjKey = @"obj";
     }
     else {
         [rsv.rgflag setSelectedSegmentIndex:1];
+    }
+    NSString *fuzzy = [self.searchObj objectForKey:@"isFuzzy"];
+    if ([@"1" isEqualToString:fuzzy]) {
+        [rsv.fuzzy setOn:YES];
+    }
+    else {
+        [rsv.fuzzy setOn:NO];
     }
     
 }
@@ -783,6 +827,53 @@ static NSString *kObjKey = @"obj";
     NSMutableDictionary *obj = [self.objs objectAtIndex:index];
     [obj setObject:@"1" forKey:@"rgflag"];
     [self.tableView reloadData];
+}
+
+#pragma mark -
+#pragma mark - LeveyPopListViewDelegate
+
+- (void) showConditionList
+{
+    NSMutableArray *array = [NSMutableArray array];
+    if (objs != nil) {
+        
+        for (int i=0; i<[objs count]; i++) {
+            NSDictionary *obj = [objs objectAtIndex:i];
+            NSString *uvender = [obj objectForKey:@"uvender"];
+            if (![array containsObject:uvender]) {
+                [array addObject:uvender];
+            }
+        }
+    }
+    
+    LeveyPopListView *lplv = [[LeveyPopListView alloc] initWithTitle:@"请选择供应商..." options:array];
+    lplv.delegate = self;
+    [lplv showInView:self.navigationController.view animated:YES];
+    
+    [self.titleBtn setEnabled:NO];
+}
+
+- (void)leveyPopListView:(LeveyPopListView *)popListView didSelectedIndex:(NSInteger)anIndex
+{
+    NSString *title = [popListView.options objectAtIndex:anIndex];
+    
+    [self.titleBtn setTitle:[NSString stringWithFormat:@"%@▾",title] forState:UIControlStateNormal];
+    
+    for (int i=0,j=self.menuList.count; i<j; i++) {
+        NSString *uvender = [[self.menuList objectAtIndex:i] objectForKey:@"uvender"];
+        if ([title isEqualToString:uvender]) {
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:i] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            break;
+        }
+    }
+    
+    
+    [self.titleBtn setEnabled:YES];
+}
+
+- (void)leveyPopListViewDidCancel
+{
+    [self.titleBtn setEnabled:YES];
 }
 
 @end

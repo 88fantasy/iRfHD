@@ -141,15 +141,14 @@ static NSString *kCellIdentifier = @"MyIdentifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[[self.objs objectAtIndex:indexPath.row] objectForKey:kCellIdentifier]];
-	if (cell == nil)
-	{
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:[[self.objs objectAtIndex:indexPath.row] objectForKey:kCellIdentifier]] ;
-		cell.accessoryType = UITableViewCellAccessoryNone;
-	}
-	
     NSArray *array = [[self.menuList objectAtIndex:indexPath.section] objectForKey:@"array"];
     NSDictionary *obj = [array objectAtIndex:indexPath.row];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifier];
+	if (cell == nil)
+	{
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:kCellIdentifier] ;
+		cell.accessoryType = UITableViewCellAccessoryNone;
+	}
     
 //    NSString *goodsname = [obj objectForKey:@"goodsname"];
 //    NSString *goodstype = [obj objectForKey:@"goodstype"];
@@ -190,59 +189,7 @@ static NSString *kCellIdentifier = @"MyIdentifier";
     [self reload];
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 #pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-}
-
 
 - (void) reload {
     
@@ -300,39 +247,45 @@ static NSString *kCellIdentifier = @"MyIdentifier";
     
     NSString *goodspy = [self.searchObj objectForKey:@"goodspy"];
     if (goodspy != nil && ![@"" isEqualToString:goodspy]) {
-        if ([[goodspy substringFromIndex:[goodspy length]-1] isEqualToString:@"%"]) {
-            goodspy = [goodspy substringToIndex:[goodspy length]-1];
-        }
-        rsv.goodspy.text = goodspy;
+        rsv.goodspy.text = [goodspy stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     NSString *goodsname = [self.searchObj objectForKey:@"goodsname"];
     if (goodsname != nil && ![@"" isEqualToString:goodsname]) {
-        if ([[goodsname substringFromIndex:[goodsname length]-1] isEqualToString:@"%"]) {
-            goodsname = [goodsname substringToIndex:[goodsname length]-1];
-        }
-        rsv.goodsname.text = goodsname;
+        rsv.goodsname.text = [goodsname stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     NSString *prodarea = [self.searchObj objectForKey:@"prodarea"];
     if (prodarea != nil && ![@"" isEqualToString:prodarea]) {
-        if ([[prodarea substringFromIndex:[prodarea length]-1] isEqualToString:@"%"]) {
-            prodarea = [prodarea substringToIndex:[prodarea length]-1];
-        }
-        rsv.prodarea.text = prodarea;
+        rsv.prodarea.text = [prodarea stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     NSString *uvender = [self.searchObj objectForKey:@"uvender"];
     if (uvender != nil && ![@"" isEqualToString:uvender]) {
-        if ([[uvender substringFromIndex:[uvender length]-1] isEqualToString:@"%"]) {
-            uvender = [uvender substringToIndex:[uvender length]-1];
-        }
-        rsv.vender.text = uvender;
+        rsv.vender.text = [uvender stringByReplacingOccurrencesOfString:@"%" withString:@""];
     }
     
     rsv.lotno.text = [self.searchObj objectForKey:@"lotno"];
     rsv.invno.text = [self.searchObj objectForKey:@"invno"];
     rsv.startdate.text = [self.searchObj objectForKey:@"startdate"];
     rsv.enddate.text = [self.searchObj objectForKey:@"enddate"];
+    
+    NSString *rgflag = [self.searchObj objectForKey:@"rgflag"];
+    if (rgflag == nil) {
+        [rsv.rgflag setSelectedSegmentIndex:0];
+    }
+    else if ([rgflag isEqualToString:@"1"]){
+        [rsv.rgflag setSelectedSegmentIndex:2];
+    }
+    else {
+        [rsv.rgflag setSelectedSegmentIndex:1];
+    }
+    NSString *fuzzy = [self.searchObj objectForKey:@"isFuzzy"];
+    if ([@"1" isEqualToString:fuzzy]) {
+        [rsv.fuzzy setOn:YES];
+    }
+    else {
+        [rsv.fuzzy setOn:NO];
+    }
     
 }
 

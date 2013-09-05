@@ -21,6 +21,8 @@
 - (id)initWithTitle:(NSString *)aTitle options:(NSArray *)aOptions;
 // If animated is YES, PopListView will be appeared with FadeIn effect.
 - (void)showInView:(UIView *)aView animated:(BOOL)animated;
+
+- (NSArray*)options;
 @end
 
 @protocol LeveyPopListViewDelegate <NSObject>

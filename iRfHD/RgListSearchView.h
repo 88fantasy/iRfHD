@@ -28,6 +28,7 @@
     UITextField *vender;
     
     UISegmentedControl *rgflag;
+    UISwitch *fuzzy;
     
     UIBarButtonItem *finButton;
     UITextField *tmp;
@@ -45,6 +46,7 @@
 @property (nonatomic, strong) IBOutlet UITextField *goodspy;
 @property (nonatomic, strong) IBOutlet UITextField *vender;
 @property (nonatomic, strong) IBOutlet UISegmentedControl *rgflag;
+@property (nonatomic, strong) IBOutlet UISwitch *fuzzy;
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *finButton;
 @property (nonatomic, strong) IBOutlet UITextField *tmp;

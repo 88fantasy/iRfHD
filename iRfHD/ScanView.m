@@ -127,7 +127,6 @@
 	// the user pressed the "Done" button, so dismiss the keyboard
 	[textField resignFirstResponder];
     [self searchButtonTapped];
-    [textField selectAll:self];
     [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
 	return YES;
 }
@@ -158,13 +157,6 @@
 	
         
     resultText.text = symbol.data;
-    
-	if([vswitch isOn]){
-		if ([resultText.text length]>0) {
-			NSUInteger index = [resultText.text length] - 1;
-			resultText.text = [resultText.text substringToIndex:index ];
-		}
-	}
 	
     
     // EXAMPLE: do something useful with the barcode image
@@ -175,17 +167,28 @@
     [reader dismissViewControllerAnimated:YES completion:nil];
     
     
-//    [self searchButtonTapped];
+    [self searchButtonTapped];
     
 }
 
 
 - (IBAction) searchButtonTapped {
 	
-    if ([resultText.text length] < 1) {
+    if ([self.resultText.text length] < 1) {
         [CommonUtil alert:NSLocalizedString(@"Error",@"Error") msg:@"条码为空,无法查询"];
         return;
     }
+    
+    [self.resultText selectAll:self];
+    
+    NSString *text = resultText.text;
+    
+    if([vswitch isOn]){
+		if ([text length]>0) {
+			NSUInteger index = [text length] - 1;
+			text = [text substringToIndex:index ];
+		}
+	}
     
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     // Set determinate mode
@@ -197,7 +200,7 @@
     if ([RootViewController isSync] ) {
         FMDatabase *db = [DbUtil retConnectionForResource:@"iRf" ofType:@"rdb"];
         if (db != nil) {
-            FMResultSet *rs = [db executeQuery:@"select * from scm_rg where labelno = ?",resultText.text];
+            FMResultSet *rs = [db executeQuery:@"select * from scm_rg where labelno = ?",text];
             NSMutableArray *rows =  [NSMutableArray array];
             while ([rs next]) {
                 
@@ -238,7 +241,7 @@
         [service getRg:self action:@selector(getRgHandler:) 
               username: username 
               password: password
-               labelno: resultText.text];//resultText.text];1200010586734,1100009542948,0200009541779
+               labelno: text];//text];1200010586734,1100009542948,0200009541779
         
 
     }
