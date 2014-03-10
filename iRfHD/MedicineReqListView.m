@@ -232,7 +232,7 @@ static NSString *kCellIdentifier = @"MedicineReqCellIdentifier";
             if ([retflag boolValue]) {
 //                [self alert:NSLocalizedString(@"Info", @"Info") msg:@"操作成功"];
                 
-                self.dataList = [NSArray array];
+                self.dataList = [NSMutableArray array];
                 [self.tableView reloadData];
                 [self.navigationController popViewControllerAnimated:YES];
             }

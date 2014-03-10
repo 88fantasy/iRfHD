@@ -227,7 +227,9 @@ static NSString *kObjKey = @"obj";
     
     
     if (![self isEditing]) { //非多选状态
-        NSDictionary *obj = [[self.menuList objectAtIndex: indexPath.row] objectForKey:kObjKey];
+        NSDictionary *section = [self.menuList objectAtIndex: indexPath.section];
+        NSArray *array = [section objectForKey:@"array"];
+        NSDictionary *obj = [[array objectAtIndex: indexPath.row] objectForKey:kObjKey];
         RgView* targetViewController = [[RgView alloc] initWithNibName:@"RgView" bundle:nil values:obj];
         targetViewController.delegate = self;
         [[self navigationController] pushViewController:targetViewController animated:YES];

@@ -55,16 +55,16 @@ typedef NS_OPTIONS(NSUInteger, TrViewType) {
     NSLog(@"%@",values);
     
     self.ugoodsid.text = (NSString*) [values objectForKey:@"ugoodsid"];
-    self.goodsname.text = (NSString*) [values objectForKey:@"goodsname"];
-    self.goodstype.text = (NSString*) [values objectForKey:@"goodstype"];
-    self.tradename.text = (NSString*) [values objectForKey:@"tradename"];
-    self.factno.text = (NSString*) [values objectForKey:@"factno"];
-    self.goodsunit.text = (NSString*) [values objectForKey:@"goodsunit"];
-    self.cusgdsid.text = (NSString*) [values objectForKey:@"cusgdsid"];
-    self.multi.text = (NSString*) [values objectForKey:@"multi"];
-    self.companyname.text = (NSString*) [values objectForKey:@"companyname"];
-    self.locno.text = (NSString*) [values objectForKey:@"locno"];
-    self.basecode.text = (NSString*) [values objectForKey:@"basecode"];
+    self.goodsname.text =  [values objectForKey:@"goodsname"] == nil ? @"" : [values objectForKey:@"goodsname"];
+    self.goodstype.text =  [values objectForKey:@"goodstype"] == nil ? @"" : [values objectForKey:@"goodstype"];
+    self.tradename.text =  [values objectForKey:@"tradename"] == nil ? @"" : [values objectForKey:@"tradename"];
+    self.factno.text =  [values objectForKey:@"factno"] == nil ? @"" : [values objectForKey:@"factno"];
+    self.goodsunit.text =  [values objectForKey:@"goodsunit"] == nil ? @"" : [values objectForKey:@"goodsunit"];
+    self.cusgdsid.text =  [values objectForKey:@"cusgdsid"] == nil ? @"" : [values objectForKey:@"cusgdsid"];
+    self.multi.text =  [values objectForKey:@"multi"];
+    self.companyname.text =  [values objectForKey:@"companyname"];
+    self.locno.text =  [values objectForKey:@"locno"] == nil ? @"" : [values objectForKey:@"locno"];
+    self.basecode.text =  [values objectForKey:@"basecode"] == nil ? @"" : [values objectForKey:@"basecode"];
 }
 
 #pragma mark ios6+纵向旋转控制需要以下3个 覆盖viewcontroller的方法
@@ -91,6 +91,14 @@ typedef NS_OPTIONS(NSUInteger, TrViewType) {
         return;
     }
     
+    if ([[self.multi.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Error")
+                                                        message: @"倍数关系不能为空"
+                                                       delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    
     iRfRgService* service = [iRfRgService service];
     //    service.logging = YES;
     
@@ -109,90 +117,74 @@ typedef NS_OPTIONS(NSUInteger, TrViewType) {
     NSString *locnostr = [self.locno.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *basecodestr = [self.basecode.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    if (goodsnamestr!=nil && ![@"" isEqualToString:goodsnamestr] ) {
+    BOOL needSave = NO;
+    NSString *goodsnamestr2 = [values objectForKey:@"goodsname"];
+    if ((goodsnamestr2 != nil || (goodsnamestr2 == nil && ![@"" isEqualToString:goodsnamestr] ) ) && ![goodsnamestr isEqualToString:goodsnamestr2]) {
         [trobj setObject:goodsnamestr forKey:@"goodsname"];
-        [values setValue:goodsnamestr forKey:@"goodsname"];
-    }
-    else {
-        [values setValue:@"" forKey:@"goodsname"];
+        needSave = YES;
     }
     
-    if (goodstypestr!=nil && ![@"" isEqualToString:goodstypestr] ) {
+    NSString *goodstypestr2 = [values objectForKey:@"goodstype"];
+    if ((goodstypestr2 != nil || (goodstypestr2 == nil && ![@"" isEqualToString:goodstypestr] ) ) && ![goodstypestr isEqualToString:goodstypestr2]) {
         [trobj setObject:goodstypestr forKey:@"goodstype"];
-        [values setValue:goodstypestr forKey:@"goodstype"];
-    }
-    else {
-        [values setValue:@"" forKey:@"goodstype"];
+        needSave = YES;
     }
     
-    if (tradenamestr!=nil && ![@"" isEqualToString:tradenamestr] ) {
+    NSString *tradenamestr2 = [values objectForKey:@"tradename"];
+    if ((tradenamestr2 != nil || (tradenamestr2 == nil && ![@"" isEqualToString:tradenamestr] ) ) && ![tradenamestr isEqualToString:tradenamestr2]) {
         [trobj setObject:tradenamestr forKey:@"tradename"];
-        [values setValue:tradenamestr forKey:@"tradename"];
-    }
-    else {
-        [values setValue:@"" forKey:@"tradename"];
+        needSave = YES;
     }
     
-    if (factnostr!=nil && ![@"" isEqualToString:factnostr] ) {
+    NSString *factnostr2 = [values objectForKey:@"factno"];
+    if ((factnostr2 != nil || (factnostr2 == nil && ![@"" isEqualToString:factnostr] ) ) && ![factnostr isEqualToString:factnostr2]) {
         [trobj setObject:factnostr forKey:@"factno"];
-        [values setValue:factnostr forKey:@"factno"];
-    }
-    else {
-        [values setValue:@"" forKey:@"factno"];
+        needSave = YES;
     }
     
-    if (goodsunitstr!=nil && ![@"" isEqualToString:goodsunitstr] ) {
+    NSString *goodsunitstr2 = [values objectForKey:@"goodsunit"];
+    if ((goodsunitstr2 != nil || (goodsunitstr2 == nil && ![@"" isEqualToString:goodsunitstr] ) ) && ![goodsunitstr isEqualToString:goodsunitstr2]) {
         [trobj setObject:goodsunitstr forKey:@"goodsunit"];
-        [values setValue:goodsunitstr forKey:@"goodsunit"];
-    }
-    else {
-        [values setValue:@"" forKey:@"goodsunit"];
+        needSave = YES;
     }
     
-    if (cusgdsidstr!=nil && ![@"" isEqualToString:cusgdsidstr] ) {
-        [trobj setObject:cusgdsidstr forKey:@"cusgdsid"];
-        [values setValue:cusgdsidstr forKey:@"cusgdsid"];
-    }
-    else {
-        [values setValue:@"" forKey:@"cusgdsid"];
-    }
-    
-    if (multistr!=nil && ![@"" isEqualToString:multistr] ) {
-        [trobj setObject:multistr forKey:@"multi"];
-        [values setValue:multistr forKey:@"multi"];
-    }
-    else {
-        [values setValue:@"" forKey:@"multi"];
-    }
-    
-    if (locnostr!=nil && ![@"" isEqualToString:locnostr] ) {
+    NSString *locnostr2 = [values objectForKey:@"locno"];
+    if ((locnostr2 != nil || (locnostr2 == nil && ![@"" isEqualToString:locnostr] ) ) && ![locnostr isEqualToString:locnostr2]) {
         [trobj setObject:locnostr forKey:@"locno"];
-        [values setValue:locnostr forKey:@"locno"];
-    }
-    else {
-        [values setValue:@"" forKey:@"locno"];
+        needSave = YES;
     }
     
-    if (basecodestr!=nil && ![@"" isEqualToString:basecodestr] ) {
+    NSString *basecodestr2 = [values objectForKey:@"basecode"];
+    if ((basecodestr2 != nil || (basecodestr2 == nil && ![@"" isEqualToString:basecodestr] ) ) && ![basecodestr isEqualToString:basecodestr2]) {
         [trobj setObject:basecodestr forKey:@"basecode"];
-        [values setValue:basecodestr forKey:@"basecode"];
-    }
-    else {
-        [values setValue:@"" forKey:@"basecode"];
+        needSave = YES;
     }
     
     
+    NSString *cusgdsidstr2 = [values objectForKey:@"cusgdsid"];
+    if (![cusgdsidstr isEqualToString:cusgdsidstr2]) {
+        [trobj setObject:cusgdsidstr forKey:@"cusgdsid"];
+        needSave = YES;
+    }
     
-    SBJsonWriter *writer = [[SBJsonWriter alloc] init];
-    NSString *json = [writer stringWithObject:trobj];
+    NSString *multistr2 = [values objectForKey:@"multi"];
+    if (![multistr isEqualToString:multistr2]) {
+        [trobj setObject:multistr forKey:@"multi"];
+        needSave = YES;
+    }
     
-    [service doTr:self
-           action:@selector(doTrHandler:)
-         username: username
-         password: password
-          pkvalue:[self.ugoodsid.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-       jsonConfig:json
-     ];
+    if (needSave) {
+        SBJsonWriter *writer = [[SBJsonWriter alloc] init];
+        NSString *json = [writer stringWithObject:trobj];
+        
+        [service doTr:self
+               action:@selector(doTrHandler:)
+             username: username
+             password: password
+              pkvalue:[self.ugoodsid.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+           jsonConfig:json
+         ];
+    }
     
     
 }

@@ -1175,6 +1175,11 @@
 				CLASSPREFIX = iRf;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = rwe;
+				TargetAttributes = {
+					8F6B910E16F6B91500A65281 = {
+						DevelopmentTeam = 87NZAMZZX2;
+					};
+				};
 			};
 			buildConfigurationList = 8F6B910A16F6B91500A65281 /* Build configuration list for PBXProject "iRfHD" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1475,6 +1480,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = iRfHD/iRfHD.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iRfHD/iRfHD-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
@@ -1493,6 +1499,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = iRfHD/iRfHD.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iRfHD/iRfHD-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
